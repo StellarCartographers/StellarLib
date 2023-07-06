@@ -1,4 +1,5 @@
 plugins {
+	id 'org.cadixdev.licenser' version '0.6.1'
     id 'java-library'
     id 'maven-publish'
     id 'signing'
@@ -6,6 +7,11 @@ plugins {
 
 group 'space.tscg.common'
 version '0.1.0'
+
+println('Version: ' + version +
+        ' Java: ' + System.getProperty('java.version') +
+        ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
+        ' Arch: ' + System.getProperty('os.arch'))
 
 repositories {
     mavenCentral()
@@ -24,6 +30,17 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.28'
 	testCompileOnly 'org.projectlombok:lombok:1.18.28'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+}
+
+license{
+	header = file("$rootDir/LICENSE-header.txt")
+    properties {
+        GROUP = 'The Stellar Cartographers\' Guild'
+        YEAR = Calendar.getInstance().get(Calendar.YEAR);
+    }
+    newLine = false
+    ignoreFailures = true
+    style { java = 'JAVADOC' }
 }
 
 java {
@@ -48,7 +65,41 @@ artifacts {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-        	from components.java
+            groupId 'space.tscg.common'
+            artifactId 'stellarlib'
+            version version
+
+			from components.java
+            
+            pom {
+                name = project.name
+                description = 'common library for all TSCG projects'
+                url = 'https://github.com/StellarCartographers/StellarLib'
+
+                scm {
+                    url = 'https://github.com/StellarCartographers/StellarLib'
+                    connection = 'scm:git:git://github.com/StellarCartographers/StellarLib.git'
+                    developerConnection = 'scm:git:git@github.com:StellarLib/StellarLib.git'
+                }
+
+                issueManagement {
+                    system = 'github'
+                    url = 'https://github.com/StellarCartographers/StellarLib/issues'
+                }
+
+                licenses {
+                    license {
+                        name = 'GPL-3.0'
+                        url = 'https://github.com/StellarCartographers/StellarLib/blob/master/LICENSE'
+                        distribution = 'repo'
+                    }
+                }
+            }
         }
+    }
+    signing {
+		publishing.publications.each {
+		    sign it
+		}
     }
 }
