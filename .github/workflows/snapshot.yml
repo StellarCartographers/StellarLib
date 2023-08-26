@@ -1,0 +1,40 @@
+name: 'CI'
+on:
+  push:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Decode Keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'keyring.gpg'
+        encodedString: ${{ secrets.GPGKEY }}
+
+    #- name: Expose Keystore
+    #  run: cp ${{ steps.decode.outputs.filePath }} .
+
+    - name: Test Compile
+      id: compile
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: assemble
+
+    - name: Publish Snapshot
+      uses: gradle/gradle-build-action@v2
+      env:
+        PGP_KEYID: ${{ secrets.PGP_KEYID }}
+        GPG_PASSKEY: ${{ secrets.GPG_PASSKEY }}
+        KEYRING_FILE: ${{ steps.decode.outputs.filePath }}
+      with:
+        arguments: publish
