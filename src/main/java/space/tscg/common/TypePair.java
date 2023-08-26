@@ -14,18 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package space.tscg.common.util;
+package space.tscg.common;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.NoArgsConstructor;
 import lombok.Value;
+import space.tscg.api.Diffable;
 
+/**
+ * Wrapper class for two objects of the same type. Extends Diffable so implementations
+ * can create a UpdatedValues map
+ * @param <TYPE>
+ */
 @Value
 public class TypePair<TYPE extends Diffable<TYPE>>
 {
-
     /** The old type. */
     private final TYPE oldType;
 
@@ -81,16 +86,15 @@ public class TypePair<TYPE extends Diffable<TYPE>>
      *
      * @param <TYPE> the generic type
      */
-
     /**
      * Instantiates a new builder.
      */
     @NoArgsConstructor
-    public static class Builder<TYPE extends Diffable<TYPE>> {
-
+    public static class Builder<TYPE extends Diffable<TYPE>>
+    {
         private List<TYPE> list = new ArrayList<>();
 
-        private int        cnt  = 0;
+        private int cnt = 0;
 
         /**
          * Adds the type.
@@ -100,7 +104,7 @@ public class TypePair<TYPE extends Diffable<TYPE>>
          */
         public TypePair.Builder<TYPE> addType(TYPE type)
         {
-            if(cnt < 2)
+            if (cnt < 2)
                 list.add(type);
             return this;
         }

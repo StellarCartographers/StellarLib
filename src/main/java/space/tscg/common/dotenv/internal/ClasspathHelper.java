@@ -16,11 +16,11 @@
  */
 package space.tscg.common.dotenv.internal;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import space.tscg.common.Standards;
 import space.tscg.common.dotenv.DotenvException;
 
 /**
@@ -28,24 +28,29 @@ import space.tscg.common.dotenv.DotenvException;
  */
 class ClasspathHelper
 {
-    static Stream<String> loadFileFromClasspath(String location) {
-        final var loader = ClasspathHelper.class;
-        var inputStream = loader.getResourceAsStream(location);
-        if (inputStream == null) {
+    static Stream<String> loadFileFromClasspath(String location)
+    {
+        final var loader      = ClasspathHelper.class;
+        var       inputStream = loader.getResourceAsStream(location);
+        if (inputStream == null)
+        {
             inputStream = loader.getResourceAsStream(location);
         }
-        if (inputStream == null) {
+        if (inputStream == null)
+        {
             inputStream = ClassLoader.getSystemResourceAsStream(location);
         }
 
-        if (inputStream == null) {
-            throw new DotenvException("Could not find "+location+" on the classpath");
+        if (inputStream == null)
+        {
+            throw new DotenvException("Could not find " + location + " on the classpath");
         }
 
-        try (var scanner = new Scanner(inputStream, StandardCharsets.UTF_8))
+        try (var scanner = new Scanner(inputStream, Standards.UTF_8_CHARSET))
         {
             final var lines = new ArrayList<String>();
-            while (scanner.hasNext()) {
+            while (scanner.hasNext())
+            {
                 lines.add(scanner.nextLine());
             }
 

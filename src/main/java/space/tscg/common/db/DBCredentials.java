@@ -14,50 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package space.tscg.common.database;
-
-import static com.rethinkdb.RethinkDB.r;
+package space.tscg.common.db;
 
 import com.rethinkdb.net.Connection;
 
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import space.tscg.common.dotenv.Dotenv;
 
 @Value
 @Builder(toBuilder = true, builderClassName = "Builder")
-public final class DatabaseCredentials
+public final class DBCredentials
 {
-
-    @NonFinal
-    @Setter
+    @NonFinal @Setter
     private String databaseName;
-    @NonNull
-    private String hostname, username, password;
+
     @lombok.Builder.Default
-    private int    port = 28015;
+    private String hostname = Dotenv.get("db_host");
+    @lombok.Builder.Default
+    private String username = Dotenv.get("db_user");
+    @lombok.Builder.Default
+    private String password = Dotenv.get("db_password");
 
-    public Connection getConnection(String databaseName)
-    {
-        return r
-            .connection()
-            .hostname(this.hostname)
-            .port(this.port)
-            .db(databaseName)
-            .user(this.username, this.password)
-            .connect();
-    }
+    @lombok.Builder.Default
+    private int port = Dotenv.getInt("db_port", 28015);
 
-    public Connection getConnection()
+    public Connection.Builder getConnectionBuilder()
     {
-        return r
-            .connection()
-            .hostname(this.hostname)
-            .port(this.port)
-            .db(this.databaseName)
-            .user(this.username, this.password)
-            .connect();
+        return new Connection.Builder().hostname(this.hostname).port(this.port).db(this.databaseName).user(this.username, this.password);
     }
 }

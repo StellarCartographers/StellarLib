@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package space.tscg.common.util;
+package space.tscg.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Map of arbitrary values that are able to be changed, mapped to their updated value
+ */
 @SuppressWarnings("serial")
 public class UpdatedValues extends HashMap<String, Object>
 {
-
     /**
      * Instantiates a new updated values.
      *
@@ -48,7 +50,6 @@ public class UpdatedValues extends HashMap<String, Object>
      */
     public static class Builder
     {
-
         /** The obj map. */
         private Map<String, Object> objMap;
 
@@ -139,7 +140,7 @@ public class UpdatedValues extends HashMap<String, Object>
          */
         public Builder appendDiff(String fieldName, UpdatedValues v1)
         {
-            if(!v1.isEmpty())
+            if (!v1.isEmpty())
                 this.objMap.put(fieldName, v1);
             return this;
         }

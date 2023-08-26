@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package space.tscg.common.database;
+package space.tscg.common.db.modal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 
-public interface ManagedObject {
-
-    @JsonIgnore
-    <T> TypeReference<T> getReference();
-
+/**
+ * @deprecated Migrate your object to extend {@link DbEntity}
+ */
+@Deprecated
+public interface ManagedObject
+{
     String getId();
 
     @JsonIgnore

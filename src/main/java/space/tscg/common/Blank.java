@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public final class Blank
 {
-
     public static final Blank NADA = new Blank();
 
     public Void toVoid()

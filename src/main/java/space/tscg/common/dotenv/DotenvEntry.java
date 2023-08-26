@@ -19,9 +19,10 @@ package space.tscg.common.dotenv;
 /**
  * A key value pair representing an environment variable and its value
  */
-public class DotenvEntry {
-
+public class DotenvEntry
+{
     private final String key;
+
     private final String value;
 
     /**
@@ -29,7 +30,8 @@ public class DotenvEntry {
      * @param key the dotenv entry name
      * @param value the dotenv entry value
      */
-    public DotenvEntry(String key, String value) {
+    public DotenvEntry(String key, String value)
+    {
         this.key = key;
         this.value = value;
     }
@@ -38,7 +40,8 @@ public class DotenvEntry {
      * Returns the key for the {@link DotenvEntry}
      * @return the key for the {@link DotenvEntry}
      */
-    public String getKey() {
+    public String getKey()
+    {
         return key;
     }
 
@@ -46,13 +49,14 @@ public class DotenvEntry {
      * Returns the value for the {@link DotenvEntry}
      * @return the value for the {@link DotenvEntry}
      */
-    public String getValue() {
+    public String getValue()
+    {
         return value;
     }
 
     @Override
-    public String toString() {
-        return key+"="+value;
+    public String toString()
+    {
+        return key + "=" + value;
     }
 }
-

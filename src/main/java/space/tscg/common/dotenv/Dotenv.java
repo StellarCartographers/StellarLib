@@ -23,7 +23,6 @@ import java.util.Set;
  */
 public interface Dotenv
 {
-
     /**
      * A dotenv entry filter
      */
@@ -33,6 +32,54 @@ public interface Dotenv
          * Filter matching only environment variables declared in the .env file
          */
         DECLARED_IN_ENV_FILE
+    }
+
+    /**
+     * Retrieve.
+     *
+     * @param key the key
+     * @return the string
+     */
+    static String get(String key)
+    {
+        return load().retrieve(key.toUpperCase());
+    }
+
+    static String get(String key, String defaultValue)
+    {
+        return load().retrieve(key.toUpperCase(), defaultValue);
+    }
+
+    /**
+     * Retrieve int.
+     *
+     * @param key the key
+     * @return the int
+     */
+    static int getInt(String key)
+    {
+        return load().retrieveAsInt(key.toUpperCase());
+    }
+
+    static int getInt(String key, int defaultValue)
+    {
+        return load().retrieveAsInt(key.toUpperCase(), defaultValue);
+    }
+
+    /**
+     * Retrieve boolean.
+     *
+     * @param key the key
+     * @return the int
+     */
+    static boolean getBoolean(String key)
+    {
+        return load().retrieveAsBoolean(key.toUpperCase());
+    }
+
+    static boolean getBoolean(String key, boolean defaultValue)
+    {
+        return load().retrieveAsBoolean(key.toUpperCase(), defaultValue);
     }
 
     /**
@@ -69,11 +116,11 @@ public interface Dotenv
     /**
      * Retrieves the int value of the environment variable specified by key.
      * 
-     * <br>returns {@link Integer.MIN_VALUE} if value cannot be parsed as int
+     * <br>returns {@link Integer#MIN_VALUE} if value cannot be parsed as int
      * @param key the environment variable
-     * @return the int value of the environment variable, or {@link Integer.MIN_VALUE}
+     * @return the int value of the environment variable, or {@link Integer#MAX_VALUE}
      */
-    int getAsInt(String key);
+    int retrieveAsInt(String key);
 
     /**
      * Retrieves the int value of the environment variable specified by key.
@@ -82,14 +129,18 @@ public interface Dotenv
      * @param defaultValue the default int value to return
      * @return the int value of the environment variable or default value
      */
-    int getAsInt(String key, int defaultValue);
+    int retrieveAsInt(String key, int defaultValue);
+
+    boolean retrieveAsBoolean(String key);
+
+    boolean retrieveAsBoolean(String key, boolean defaultValue);
 
     /**
      * Retrieves the value of the environment variable specified by key
      * @param key the environment variable
      * @return the value of the environment variable
      */
-    String get(String key);
+    String retrieve(String key);
 
     /**
      * Retrieves the value of the environment variable specified by key.
@@ -98,5 +149,5 @@ public interface Dotenv
      * @param defaultValue the default value to return
      * @return the value of the environment variable or default value
      */
-    String get(String key, String defaultValue);
+    String retrieve(String key, String defaultValue);
 }

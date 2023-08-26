@@ -14,30 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package space.tscg.common.database;
+package space.tscg.api;
 
-import java.util.ArrayList;
-import java.util.List;
+import space.tscg.common.UpdatedValues;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Getter;
-
-@Getter
-public class Operation
-{
-    @JsonProperty("generated_keys")
-    private final List<String> generatedKeys = new ArrayList<>();
-    private int                inserted, replaced, unchanged, deleted, skipped, errors;
-    @JsonProperty("first_error")
-    private String             firstError;
-    private String             warnings;
-
-    public static Operation Error(String message)
-    {
-        var o = new Operation();
-        o.firstError = message;
-        o.errors = 1;
-        return o;
-    }
+/**
+ * Classes that inherit Diffable can have another instance of their type
+ * passed in to check for the differences between the two
+ *
+ * @param <T> This must be the class thats implementing this interface
+ */
+public interface Diffable<T> {
+    /**
+     * Generates a Diff style UpdatedValues class that acts as a Map only
+     * containing fields or ojects that changed during an operation.
+     *
+     * @param other The same type to compare too
+     * @return an UpdatedValues for this type
+     */
+    UpdatedValues diff(T other);
 }

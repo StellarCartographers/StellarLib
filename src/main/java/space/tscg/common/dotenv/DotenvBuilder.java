@@ -35,11 +35,14 @@ import space.tscg.common.dotenv.internal.DotenvReader;
  */
 public class DotenvBuilder
 {
+    private String filename = ".env";
 
-    private String  filename         = ".env";
-    private String  directoryPath    = "./";
+    private String directoryPath = "./";
+
     private boolean systemProperties = true;
-    private boolean throwIfMissing   = true;
+
+    private boolean throwIfMissing = true;
+
     private boolean throwIfMalformed = true;
 
     public Dotenv defaultConfiguration()
@@ -117,30 +120,18 @@ public class DotenvBuilder
 
     static class DotenvImpl implements Dotenv
     {
-
         private final Map<String, String> envVars;
-        private final Set<DotenvEntry>    set;
-        private final Set<DotenvEntry>    setInFile;
+
+        private final Set<DotenvEntry> set;
+
+        private final Set<DotenvEntry> setInFile;
 
         public DotenvImpl(final List<DotenvEntry> envVars)
         {
-            final Map<String, String> envVarsInFile =
-                envVars
-                .stream()
-                .collect(toMap(DotenvEntry::getKey, DotenvEntry::getValue));
+            final Map<String, String> envVarsInFile = envVars.stream().collect(toMap(DotenvEntry::getKey, DotenvEntry::getValue));
             this.envVars = new HashMap<>(envVarsInFile);
-            this.set =
-                this.envVars
-                .entrySet()
-                .stream()
-                .map(it -> new DotenvEntry(it.getKey(), it.getValue()))
-                .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
-            this.setInFile =
-                envVarsInFile
-                .entrySet()
-                .stream()
-                .map(it -> new DotenvEntry(it.getKey(), it.getValue()))
-                .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+            this.set = this.envVars.entrySet().stream().map(it -> new DotenvEntry(it.getKey(), it.getValue())).collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+            this.setInFile = envVarsInFile.entrySet().stream().map(it -> new DotenvEntry(it.getKey(), it.getValue())).collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
         }
 
         @Override
@@ -156,29 +147,43 @@ public class DotenvBuilder
         }
 
         @Override
-        public int getAsInt(String key)
+        public int retrieveAsInt(String key)
         {
-            return safeInt(get(key));
+            return safeInt(retrieve(key));
         }
 
         @Override
-        public int getAsInt(String key, int defaultValue)
+        public int retrieveAsInt(String key, int defaultValue)
         {
-            final var value = get(key);
-            return value == null ? safeInt(value) : defaultValue;
+            final var value = retrieve(key);
+            return value == null ? defaultValue : safeInt(value);
         }
 
         @Override
-        public String get(final String key)
+        public boolean retrieveAsBoolean(String key)
+        {
+            final var value = retrieve(key);
+            return Boolean.valueOf(value);
+        }
+
+        @Override
+        public boolean retrieveAsBoolean(String key, boolean defaultValue)
+        {
+            final var value = retrieve(key);
+            return value == null ? defaultValue : Boolean.valueOf(value);
+        }
+
+        @Override
+        public String retrieve(final String key)
         {
             final var value = System.getenv(key);
             return value == null ? envVars.get(key) : value;
         }
 
         @Override
-        public String get(String key, String defaultValue)
+        public String retrieve(String key, String defaultValue)
         {
-            final var value = this.get(key);
+            final var value = this.retrieve(key);
             return value == null ? defaultValue : value;
         }
 
@@ -186,7 +191,7 @@ public class DotenvBuilder
         {
             try
             {
-                return Integer.valueOf(value);
+                return Integer.parseInt(value);
             } catch (NumberFormatException e)
             {
                 return Integer.MIN_VALUE;
