@@ -18,28 +18,19 @@ jobs:
         distribution: temurin
         java-version: 17
 
-    - name: Decode Keystore
-      uses: timheuer/base64-to-file@v1.2
-      with:
-        fileName: 'keyring.gpg'
-        encodedString: ${{ secrets.GPGKEY }}
-
-    #- name: Expose Keystore
-    #  run: cp ${{ steps.decode.outputs.filePath }} .
-
     - name: Test Compile
       id: compile
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: assemble
+        arguments: compileJava
 
     - name: Publish Snapshot
       uses: gradle/gradle-build-action@v2
       env:
         ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MVN_CENTRAL_USERNAME }}
         ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MVN_CENTRAL_PASSWORD }}
-        PGP_KEYID: ${{ secrets.PGP_KEYID }}
-        GPG_PASSKEY: ${{ secrets.GPG_PASSKEY }}
-        KEYRING_FILE: ${{ steps.decode.outputs.filePath }}
+        ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPGKEY }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.PGP_KEYID }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSKEY }}
       with:
         arguments: publish
