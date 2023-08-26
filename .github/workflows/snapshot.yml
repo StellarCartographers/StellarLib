@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build Library
+    name: Build & Compile 
     steps:
     - uses: actions/checkout@v3
     - run: chmod +x ./gradlew
@@ -14,11 +14,6 @@ jobs:
       with:
         distribution: temurin
         java-version: 17
-        
-  test:
-    runs-on: ubuntu-latest
-    name: Compile
-    steps:
     - uses: gradle/gradle-build-action@v2
       id: compile
       with:
@@ -27,9 +22,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publish Snapshot
+    needs:
+      - build
     steps:
     - uses: gradle/gradle-build-action@v2
-      if: steps.compile.outcome == 'success'
+      if: jobs.build.result == 'success'
       env:
         ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MVN_CENTRAL_USERNAME }}
         ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MVN_CENTRAL_PASSWORD }}
@@ -44,12 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
-      - test
       - publish
     if: ${{ always() }}
     steps:
       - name: Notify
-        uses: nobrayner/discord-webhook@v1
+        uses: ROMVoid95/discord-webhook@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          
