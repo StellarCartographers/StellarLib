@@ -27,6 +27,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: chmod +x ./gradlew
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
     - uses: gradle/gradle-build-action@v2
       if: needs.build.result == 'success'
       env:
@@ -47,7 +51,7 @@ jobs:
     if: ${{ always() }}
     steps:
       - name: Notify
-        uses: ROMVoid95/discord-webhook@master
+        uses: ROMVoid95/discord-webhook@1.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
