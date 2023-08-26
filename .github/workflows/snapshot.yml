@@ -9,6 +9,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Make gradlew Executable
+      run: chmod +x ./gradlew
+
     - name: Setup Java
       uses: actions/setup-java@v3
       with:
@@ -33,6 +36,8 @@ jobs:
     - name: Publish Snapshot
       uses: gradle/gradle-build-action@v2
       env:
+        ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MVN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MVN_CENTRAL_PASSWORD }}
         PGP_KEYID: ${{ secrets.PGP_KEYID }}
         GPG_PASSKEY: ${{ secrets.GPG_PASSKEY }}
         KEYRING_FILE: ${{ steps.decode.outputs.filePath }}
