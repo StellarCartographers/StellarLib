@@ -11,14 +11,14 @@ public class TSCGDatabase extends Database
 {
     private static final TSCGDatabase _instance = new TSCGDatabase();
 
-    public static TSCGDatabase get()
+    public static TSCGDatabase instance()
     {
         return _instance;
     }
 
     static Connection getConn()
     {
-        return get().connection();
+        return instance().connection();
     }
 
     public <T> Result<T> getAll(String tableName, Class<T> target)
