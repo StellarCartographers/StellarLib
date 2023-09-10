@@ -86,9 +86,6 @@ public class TypePair<TYPE extends Diffable<TYPE>>
      *
      * @param <TYPE> the generic type
      */
-    /**
-     * Instantiates a new builder.
-     */
     @NoArgsConstructor
     public static class Builder<TYPE extends Diffable<TYPE>>
     {
@@ -101,6 +98,8 @@ public class TypePair<TYPE extends Diffable<TYPE>>
          *
          * @param type the type
          * @return this builder
+         * @apiNote If this builder already has 2 Types then this does nothing
+         *          and returns itself, the passed type is not added.
          */
         public TypePair.Builder<TYPE> addType(TYPE type)
         {

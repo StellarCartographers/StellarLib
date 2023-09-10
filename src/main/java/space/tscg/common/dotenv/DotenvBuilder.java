@@ -147,16 +147,10 @@ public class DotenvBuilder
         }
 
         @Override
-        public int retrieveAsInt(String key)
-        {
-            return safeInt(retrieve(key));
-        }
-
-        @Override
         public int retrieveAsInt(String key, int defaultValue)
         {
-            final var value = retrieve(key);
-            return value == null ? defaultValue : safeInt(value);
+            final var value = envVars.get(key);
+            return value == null ? defaultValue : safeInt(value, defaultValue);
         }
 
         @Override
@@ -187,14 +181,14 @@ public class DotenvBuilder
             return value == null ? defaultValue : value;
         }
 
-        private int safeInt(String value)
+        private Integer safeInt(String value, int fallback)
         {
             try
             {
                 return Integer.parseInt(value);
             } catch (NumberFormatException e)
             {
-                return Integer.MIN_VALUE;
+                return fallback;
             }
         }
     }

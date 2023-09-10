@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import lombok.experimental.UtilityClass;
-import space.tscg.common.Standards;
 
 @UtilityClass
 public class URLUtils
@@ -62,7 +62,7 @@ public class URLUtils
 
         for (Map.Entry<String, List<String>> entry : params.entrySet())
         {
-            String newKey = entry.getKey() != null ? URLEncoder.encode(entry.getKey(), Standards.UTF_8_CHARSET) : null;
+            String newKey = entry.getKey() != null ? URLEncoder.encode(entry.getKey(), Charset.forName("UTF-8")) : null;
 
             List<String> newValues;
 
@@ -74,7 +74,7 @@ public class URLUtils
                 {
                     if (value != null)
                     {
-                        newValues.add(URLEncoder.encode(value, Standards.UTF_8_CHARSET));
+                        newValues.add(URLEncoder.encode(value, Charset.forName("UTF-8")));
                     } else
                     {
                         newValues.add(null); // preserve null values
@@ -237,9 +237,9 @@ public class URLUtils
 
             String[] pair = param.split("=", 2); // Split around the first '=', see issue #169
 
-            String key = URLDecoder.decode(pair[0], Standards.UTF_8_CHARSET);
+            String key = URLDecoder.decode(pair[0], Charset.forName("UTF-8"));
 
-            String value = pair.length > 1 ? URLDecoder.decode(pair[1], Standards.UTF_8_CHARSET) : "";
+            String value = pair.length > 1 ? URLDecoder.decode(pair[1], Charset.forName("UTF-8")) : "";
 
             if (params.containsKey(key))
             {

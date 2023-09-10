@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
 @Data
-@Builder(builderClassName = "Builder", builderMethodName = "Builder")
+@Builder(builderMethodName = "Builder", toBuilder = true)
 @Jacksonized
 public class EliteInfo
 {
     private String cmdrName;
-    private String id;
+    private String EliteId;
     private String systemAddress;
     private String carrierId;
 }

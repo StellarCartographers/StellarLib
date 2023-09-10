@@ -19,9 +19,9 @@ package space.tscg.common;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public final class Blank
+public final class Nothing
 {
-    public static final Blank NADA = new Blank();
+    public static final Nothing NADA = new Nothing();
 
     public Void toVoid()
     {
@@ -37,7 +37,7 @@ public final class Blank
     @Override
     public boolean equals(Object obj)
     {
-        return obj instanceof Blank;
+        return obj instanceof Nothing;
     }
 
     public static Void voidness()

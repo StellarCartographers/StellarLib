@@ -1,22 +1,16 @@
 package space.tscg.common.db.prefab;
 
-import static com.rethinkdb.RethinkDB.r;
-
 import java.util.Optional;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 import space.tscg.common.db.modal.DbEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(builderMethodName = "Builder", toBuilder = true)
-@NoArgsConstructor
-@AllArgsConstructor
 @Jacksonized
 public class Member implements DbEntity
 {
@@ -40,6 +34,6 @@ public class Member implements DbEntity
 
     public static Optional<Member> get(String id)
     {
-        return Optional.ofNullable(r.table(TABLE_NAME).get(id).runAtom(TSCGDatabase.getConn(), Member.class));
+        return Optional.ofNullable(TSCGDatabase.instance().get(TABLE_NAME, id, Member.class));
     }
 }

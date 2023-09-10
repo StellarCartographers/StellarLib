@@ -2,6 +2,7 @@ package space.tscg.common.db.prefab;
 
 import static com.rethinkdb.RethinkDB.r;
 
+import com.rethinkdb.gen.ast.ReqlExpr;
 import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.Result;
 
@@ -16,7 +17,7 @@ public class TSCGDatabase extends Database
         return _instance;
     }
 
-    static Connection getConn()
+    public static Connection getConn()
     {
         return instance().connection();
     }
@@ -24,5 +25,15 @@ public class TSCGDatabase extends Database
     public <T> Result<T> getAll(String tableName, Class<T> target)
     {
         return r.table(tableName).run(connection(), target);
+    }
+    
+    public Result<?> runExpr(ReqlExpr expr)
+    {
+        return expr.run(getConn());
+    }
+    
+    public <T> T runExpr(ReqlExpr expr, Class<T> cls)
+    {
+        return expr.run(getConn(), cls).single();
     }
 }

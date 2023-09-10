@@ -18,24 +18,34 @@ package space.tscg.common.db;
 
 import static com.rethinkdb.RethinkDB.r;
 
-import java.util.function.Function;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rethinkdb.RethinkDB;
-import com.rethinkdb.gen.ast.Insert;
 import com.rethinkdb.gen.exc.ReqlAuthError;
 import com.rethinkdb.net.Connection;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import space.tscg.common.db.modal.DbEntity;
-import space.tscg.common.db.op.Operation;
+import space.tscg.common.db.op.DeleteOperation;
+import space.tscg.common.db.op.InsertOperation;
+import space.tscg.common.db.op.ReplaceOperation;
+import space.tscg.common.db.op.UpdateOperation;
 import space.tscg.common.dotenv.Dotenv;
 
 public abstract class Database
 {
     private DBCredentials credentials;
     private Connection    connection;
+
+    /**
+     * Instantiates a new database.
+     */
+    protected Database()
+    {
+        this.credentials = buildDefault();
+        connection();
+    }
+
+    private DBCredentials buildDefault()
+    {
+        return DBCredentials.builder().databaseName(Dotenv.get("database")).build();
+    }
 
     /**
      * Instantiates a new database.
@@ -46,36 +56,6 @@ public abstract class Database
     {
         this.credentials = credentials;
         connection();
-    }
-    
-    /**
-     * Instantiates a new database.
-     *
-     * @param credentials the credentials
-     * @param mapperToUse the ObjectMapper RethinkDB will use for mapping results to POJO's
-     */
-    protected Database(DBCredentials credentials, ObjectMapper mapperToUse)
-    {
-        this(credentials);
-        RethinkDB.setResultMapper(mapperToUse);
-    }
-    
-    /**
-     * Instantiates a new database.
-     * 
-     * @param mapperToUse the ObjectMapper RethinkDB will use for mapping results to POJO's
-     */
-    protected Database(ObjectMapper mapperToUse)
-    {
-        this(DBCredentials.builder().databaseName(Dotenv.get("database")).build(), mapperToUse);
-    }
-    
-    /**
-     * Instantiates a new database.
-     */
-    protected Database()
-    {
-        this(DBCredentials.builder().databaseName(Dotenv.get("database")).build());
     }
 
     /**
@@ -108,31 +88,50 @@ public abstract class Database
         return connection;
     }
 
+    public <T> T get(String table, String id, Class<T> type)
+    {
+        return r.table(table).get(id).runAtom(connection(), type);
+    }
+    
     /**
      * Deletes the object from the database.
      * <p>
      * <strong>OPERATION IS DESTRUCTIVE AND CANNOT BE UNDONE AFTER COMPLETED</strong>
      *
      * @param object DbEntity object
-     * @return {@link Operation} result
+     * @return {@link DeleteOperation} result
      */
-    public Operation delete(DbEntity object)
+    public DeleteOperation delete(DbEntity object)
     {
-        return r.table(object.getTableName()).get(object.getId()).delete().run(connection(), Operation.class).single();
+        return r.table(object.getTableName()).get(object.getId()).delete().runAtom(connection(), DeleteOperation.class);
+    }
+
+    /**
+     * Deletes the object from the database.
+     * <p>
+     * <strong>OPERATION IS DESTRUCTIVE AND CANNOT BE UNDONE AFTER COMPLETED</strong>
+     *
+     * @param table table name
+     * @param id EntityDb id
+     * @return {@link DeleteOperation} result
+     */
+    public DeleteOperation delete(String table, String id)
+    {
+        return r.table(table).get(id).delete().runAtom(connection(), DeleteOperation.class);
     }
 
     /**
      * Convienance method that helps indicate an object is created and saved to the database.
      * But will conflict if an object with the same id already exists. 
      * <br>You can use <code>getFirstError().startsWith("Duplicate primary key")</code> on the
-     * returned {@link Operation} instance to check for a conflict.
+     * returned {@link InsertOperation} instance to check for a conflict.
      *
      * @param object DbEntity object
-     * @return {@link Operation} result
+     * @return {@link InsertOperation} result
      */
-    public Operation create(DbEntity object)
+    public InsertOperation create(DbEntity object)
     {
-        return InternalOp.CREATE.query(object).run(connection(), Operation.class).single();
+        return r.table(object.getTableName()).insert(object).runAtom(connection(), InsertOperation.class);
     }
 
     /**
@@ -147,23 +146,23 @@ public abstract class Database
      */
     public void saveNoReply(DbEntity object)
     {
-        InternalOp.SAVE.query(object).runNoReply(connection());
+        r.table(object.getTableName()).insert(object).optArg("conflict", "replace").runNoReply(connection());
     }
 
     /**
-     * Saves the object to the database and returns a {@link Operation}. 
+     * Saves the object to the database and returns a {@link ReplaceOperation}. 
      * <p>
      * <strong> Note: Save operations completely replace all values for object in the database</strong>
      *
      * @param object DbEntity object
-     * @return {@link Operation} result
+     * @return {@link ReplaceOperation} result
      * @see {@link #saveNoReply(DbEntity)}
      * @see {@link #update(DbEntity)}
      * @see {@link #updateNoReply(DbEntity)}
      */
-    public Operation save(DbEntity object)
+    public ReplaceOperation save(DbEntity object)
     {
-        return InternalOp.SAVE.query(object).run(connection(), Operation.class).single();
+        return r.table(object.getTableName()).insert(object).optArg("conflict", "replace").runAtom(connection(), ReplaceOperation.class);
     }
 
     /**
@@ -178,38 +177,22 @@ public abstract class Database
      */
     public void updateNoReply(DbEntity object)
     {
-        InternalOp.UPDATE.query(object).runNoReply(connection());
+        r.table(object.getTableName()).insert(object).optArg("conflict", "update").runNoReply(connection());
     }
 
     /**
-     * Updates the object in the database and returns a {@link Operation}. 
+     * Updates the object in the database and returns a {@link UpdateOperation}. 
      * <p>
      * <strong> Note: Update operations only replace values that have changed for the object in the database</strong>
      *
      * @param object DbEntity object
-     * @return {@link Operation} result
+     * @return {@link UpdateOperation} result
      * @see {@link #saveNoReply(DbEntity)}
      * @see {@link #save(DbEntity)}
      * @see {@link #updateNoReply(DbEntity)}
      */
-    public Operation update(DbEntity object)
+    public UpdateOperation update(DbEntity object)
     {
-        return InternalOp.UPDATE.query(object).run(connection(), Operation.class).single();
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private enum InternalOp
-    {
-        CREATE,
-        UPDATE(i -> i.optArg("conflict", "update")),
-        SAVE(i -> i.optArg("conflict", "replace"));
-
-        private Function<Insert, Insert> func = i -> i;
-
-        Insert query(DbEntity obj)
-        {
-            return this.func.apply(r.table(obj.getTableName()).insert(obj));
-        }
+        return r.table(object.getTableName()).insert(object).optArg("conflict", "update").runAtom(connection(), UpdateOperation.class);
     }
 }

@@ -50,17 +50,6 @@ public interface Dotenv
         return load().retrieve(key.toUpperCase(), defaultValue);
     }
 
-    /**
-     * Retrieve int.
-     *
-     * @param key the key
-     * @return the int
-     */
-    static int getInt(String key)
-    {
-        return load().retrieveAsInt(key.toUpperCase());
-    }
-
     static int getInt(String key, int defaultValue)
     {
         return load().retrieveAsInt(key.toUpperCase(), defaultValue);
@@ -112,15 +101,6 @@ public interface Dotenv
      * @return the set of {@link DotenvEntry}s for environment variables matching the {@link Dotenv.Filter}
      */
     Set<DotenvEntry> entries(Filter filter);
-
-    /**
-     * Retrieves the int value of the environment variable specified by key.
-     * 
-     * <br>returns {@link Integer#MIN_VALUE} if value cannot be parsed as int
-     * @param key the environment variable
-     * @return the int value of the environment variable, or {@link Integer#MAX_VALUE}
-     */
-    int retrieveAsInt(String key);
 
     /**
      * Retrieves the int value of the environment variable specified by key.

@@ -16,11 +16,11 @@
  */
 package space.tscg.common.dotenv.internal;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import space.tscg.common.Standards;
 import space.tscg.common.dotenv.DotenvException;
 
 /**
@@ -46,7 +46,7 @@ class ClasspathHelper
             throw new DotenvException("Could not find " + location + " on the classpath");
         }
 
-        try (var scanner = new Scanner(inputStream, Standards.UTF_8_CHARSET))
+        try (var scanner = new Scanner(inputStream, Charset.forName("UTF-8")))
         {
             final var lines = new ArrayList<String>();
             while (scanner.hasNext())
