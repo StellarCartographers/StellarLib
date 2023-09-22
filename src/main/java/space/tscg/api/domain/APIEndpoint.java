@@ -9,7 +9,7 @@ public interface APIEndpoint
 {
     default String getTemplate()
     {
-        return "https://%s%s";
+        return "%s%s";
     }
 
     HttpUrl toHttpUrl();

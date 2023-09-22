@@ -51,7 +51,7 @@ public enum Endpoint implements APIEndpoint
     @Override
     public HttpUrl toHttpUrl()
     {
-        var httpurl = HttpUrl.parse(APIEndpoint.super.getTemplate().formatted(getDomain(), endpoint));
+        HttpUrl httpurl = HttpUrl.parse(APIEndpoint.super.getTemplate().formatted(getDomain(), endpoint));
         setDomain(null);
         return httpurl;
     }

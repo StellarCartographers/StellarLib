@@ -1,33 +1,41 @@
 package space.tscg.common.domain;
 
+import space.tscg.common.util.URLParser;
+
 public class Domain
 {
-    private String domain;
-
+    private String scheme;
+    private String port;
+    private String host;
+    
     public static Domain of(String domain)
     {
-        return new Domain(domain);
+        URLParser parser = new URLParser(domain);
+        if(parser.isValid())
+            return new Domain(parser);
+        throw new RuntimeException("Invalid domain passed to URLParser: " + domain);
     }
-
-    private Domain(String domain)
+    
+    private Domain(URLParser parser)
     {
-        this.domain = domain;
+        if(parser.hasScheme())
+            this.scheme = parser.getScheme();
+        else
+            this.scheme = "https://";
+        if(parser.hasPort())
+            this.port = parser.getPort();
+        this.host = parser.getHost();
     }
 
     public static final Domain getDefault()
     {
         return DefaultDomain.getDefault();
     }
-    
-    public String name()
-    {
-        return toString();
-    }
-    
+
     @Override
     public String toString()
     {
-        return domain;
+        return this.port != null ? "%s%s:%s".formatted(this.scheme, this.host, this.port) : "%s%s".formatted(this.scheme, this.host);
     }
     
     public Endpoint toEndpoint(Endpoint endpoint)
