@@ -15,6 +15,7 @@ tscg {
 dependencies {
     compileOnly 'io.javalin:javalin:5.6.2'
     compileOnly 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'org.yaml:snakeyaml:2.2'
     implementation 'org.tinylog:tinylog-api:2.6.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     implementation 'com.rethinkdb:rethinkdb-driver:2.4.4'

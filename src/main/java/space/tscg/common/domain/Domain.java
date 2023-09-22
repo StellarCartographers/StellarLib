@@ -19,13 +19,18 @@ public class Domain
         return DefaultDomain.getDefault();
     }
     
+    public String name()
+    {
+        return toString();
+    }
+    
     @Override
     public String toString()
     {
         return domain;
     }
     
-    public DomainEndpoint toEndpoint(DomainEndpoint endpoint)
+    public Endpoint toEndpoint(Endpoint endpoint)
     {
         return endpoint.withDomain(this);
     }

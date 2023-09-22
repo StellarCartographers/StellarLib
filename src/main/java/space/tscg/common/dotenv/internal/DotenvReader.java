@@ -53,17 +53,22 @@ public class DotenvReader
      */
     public List<String> read() throws DotenvException, IOException
     {
-        var dir = directory.replaceAll("\\\\", "/").replaceFirst("\\.env$", "").replaceFirst("/$", "");
+        var dir                = directory.replaceAll("\\\\", "/").replaceFirst("\\.env$", "").replaceFirst("/$", "");
+        var location           = dir + "/" + filename;
+        var localLocation      = dir + "/" + "env.local";
+        var lowerLocation      = location.toLowerCase();
+        var lowerLocalLocation = localLocation.toLowerCase();
+        var path               = lowerLocation.startsWith("file:") || lowerLocation.startsWith("android.resource:") ? Paths.get(URI.create(location)) : Paths.get(location);
+        var localPath          = lowerLocalLocation.startsWith("file:") || lowerLocalLocation.startsWith("android.resource:") ? Paths.get(URI.create(localLocation)) : Paths.get(localLocation);
 
-        var location      = dir + "/" + filename;
-        var lowerLocation = location.toLowerCase();
-        var path          = lowerLocation.startsWith("file:") || lowerLocation.startsWith("android.resource:") ? Paths.get(URI.create(location)) : Paths.get(location);
-
+        if(Files.exists(localPath))
+        {
+            return Files.readAllLines(localPath);
+        }
         if (Files.exists(path))
         {
             return Files.readAllLines(path);
         }
-
         try
         {
             return ClasspathHelper.loadFileFromClasspath(location.replaceFirst("^\\./", "/")).collect(Collectors.toList());

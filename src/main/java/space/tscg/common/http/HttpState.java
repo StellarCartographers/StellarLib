@@ -1,18 +1,26 @@
 package space.tscg.common.http;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import io.javalin.http.HttpStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import space.tscg.common.json.Json;
-import space.tscg.common.json.JsonWrapper;
+import lombok.experimental.UtilityClass;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public final class HttpState implements JsonWrapper
+public class HttpState
 {
     public static final HttpState          CONTINUE                        = new HttpState(100, "Continue");
     public static final HttpState          SWITCHING_PROTOCOLS             = new HttpState(101, "Switching Protocols");
@@ -138,54 +146,61 @@ public final class HttpState implements JsonWrapper
         CODE_TO_STATES.put(INSUFFICIENT_STORAGE.getCode(), INSUFFICIENT_STORAGE);
         CODE_TO_STATES.put(LOOP_DETECTED.getCode(), LOOP_DETECTED);
     }
-    
+
     public static HttpState fromCode(int code)
     {
         return CODE_TO_STATES.get(code);
     }
-    
+
     private final int    code;
     private final String state;
     @SuppressWarnings("rawtypes")
-    private Map          data;
+    private Data         data;
 
     public HttpStatus toHttpStatus()
     {
         return HttpStatus.forStatus(code);
     }
 
-    public HttpState withData(Data data)
-    {
-        this.data = data.getDataMap();
-        return this;
-    }
-    
-    public <T> HttpState withData(Map<String, T> data)
+    public <T> HttpState withData(Data<T> data)
     {
         this.data = data;
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public HttpState addData(String key, Object value)
-    {
-        if (this.data == null)
-        {
-            this.data = new HashMap<>();
+    @UtilityClass
+    public static final class HttpStateAdapter {
+        
+        public static class Serializer extends StdSerializer<HttpState> {
+
+            private static final long serialVersionUID = 9115662983758042660L;
+
+            protected Serializer()
+            {
+                super(HttpState.class);
+            }
+
+            @Override
+            public void serialize(HttpState value, JsonGenerator gen, SerializerProvider provider) throws IOException
+            {
+            }
         }
-        this.data.put(key, value);
-        return this;
-    }
+        
+        public static class Deserializer extends StdDeserializer<HttpState> {
 
-    @Override
-    public String json()
-    {
-        return Json.string(this);
-    }
+            private static final long serialVersionUID = 5873054711350065553L;
 
-    @Override
-    public String prettyPrintJson()
-    {
-        return Json.prettyString(this);
+            protected Deserializer()
+            {
+                super(HttpState.class);
+            }
+
+            @Override
+            public HttpState deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException
+            {
+                return null;
+            }
+            
+        }
     }
 }

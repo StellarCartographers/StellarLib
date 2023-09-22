@@ -5,6 +5,9 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 import lombok.experimental.UtilityClass;
 
@@ -14,6 +17,20 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class FileUtility
 {
+    /**
+     * Override content of the specified file
+     */
+    public static void overrideFile(File file, String content) throws IOException {
+        Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+    
+    /**
+     * @return content of the specified file
+     */
+    public static String getContentOfFile(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+    }
+    
     /**
      * Compares the contents of two files to determine if they are equal or not.
      * <p>

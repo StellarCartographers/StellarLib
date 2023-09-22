@@ -34,6 +34,11 @@ public interface Dotenv
         DECLARED_IN_ENV_FILE
     }
 
+    static Set<DotenvEntry> getAll()
+    {
+        return load().entries();
+    }
+    
     /**
      * Retrieve.
      *

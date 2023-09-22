@@ -1,28 +1,28 @@
 package space.tscg.common.domain;
 
 import java.net.URI;
-import java.util.Arrays;
 
 import okhttp3.HttpUrl;
 import space.tscg.api.domain.APIEndpoint;
 
-public enum DomainEndpoint implements APIEndpoint
+public enum Endpoint implements APIEndpoint
 {
+    API_CARRIER("/api/carrier"),
     OAUTH_CALLBACK("/api/oauth/callback"),
     OAUTH_AUTHLINK("/api/oauth/authorizationlink"),
-    CAPI_CARRIER("/api/capi/carrier"),
-    CAPI_PROFILE("/api/capi/profile"),
+    CAPI_CARRIER("/internal/capi/carrier"),
+    CAPI_PROFILE("/internal/capi/profile"),
     ;
 
     private Domain domain;
     private String endpoint;
 
-    DomainEndpoint(String endpoint)
+    Endpoint(String endpoint)
     {
         this.endpoint = endpoint;
     }
     
-    DomainEndpoint withDomain(Domain domain)
+    Endpoint withDomain(Domain domain)
     {
         setDomain(domain);
         return this;
@@ -46,18 +46,6 @@ public enum DomainEndpoint implements APIEndpoint
     public String getBackend()
     {
         return endpoint.split("/")[0];
-    }
-
-    @Override
-    public String getTag()
-    {
-        return name().toLowerCase().split("_")[0];
-    }
-
-    @Override
-    public DomainEndpoint[] ofTag(String tag)
-    {
-        return Arrays.asList(DomainEndpoint.values()).stream().filter(de -> de.getTag().equals(tag)).toArray(DomainEndpoint[]::new);
     }
 
     @Override

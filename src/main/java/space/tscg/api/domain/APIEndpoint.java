@@ -4,7 +4,6 @@ import java.net.URI;
 
 import okhttp3.HttpUrl;
 import space.tscg.common.domain.Domain;
-import space.tscg.common.domain.DomainEndpoint;
 
 public interface APIEndpoint
 {
@@ -12,10 +11,6 @@ public interface APIEndpoint
     {
         return "https://%s%s";
     }
-
-    String getTag();
-
-    DomainEndpoint[] ofTag(String tag);
 
     HttpUrl toHttpUrl();
 
