@@ -4,8 +4,8 @@ plugins {
     id 'java-library'
 }
 
-group 'space.tscg.common'
-version '0.2.0-SNAPSHOT'
+group 'space.tscg'
+version '0.2.0'
 
 tscg {
 	devName 'ROMVoid95'

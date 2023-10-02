@@ -17,6 +17,11 @@ import space.tscg.common.http.HttpError.HttpErrorSerialization;
 @JsonSerialize(using = HttpErrorSerialization.class)
 public record HttpError(HttpState state)
 {
+    public <T> Result<T, HttpError> asResult()
+    {
+        return Result.error(this);
+    }
+    
     public static <T> Result<T, HttpError> unauthorized(Data data)
     {
         return Result.error(new HttpError(HttpState.UNAUTHORIZED.withData(data)));
@@ -82,6 +87,7 @@ public record HttpError(HttpState state)
         var stack = Arrays.asList(e.getStackTrace()).stream().map("at %s"::formatted).collect(Collectors.toCollection(ArrayList::new));
         return internalServerError(Data.asLinkedHashMap()
             .add("error", "Exception")
+            .add("message", e.getMessage())
             .add("Caused by: " + e.getClass().getName(), stack.toArray(new String[0])));
     }
     

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.jackson.Jacksonized;
-import space.tscg.common.db.modal.DbEntity;
+import space.tscg.api.database.DbEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -14,8 +14,6 @@ import space.tscg.common.db.modal.DbEntity;
 @Jacksonized
 public class Member implements DbEntity
 {
-    public static final String TABLE_NAME = "users";
-    
     private String id;
     private String authenticationId;
     private EliteInfo elite;
@@ -27,13 +25,13 @@ public class Member implements DbEntity
     }
 
     @Override
-    public String getTableName()
+    public Tables getTable()
     {
-        return TABLE_NAME;
+        return Tables.MEMBERS;
     }
 
     public static Optional<Member> get(String id)
     {
-        return Optional.ofNullable(TSCGDatabase.instance().get(TABLE_NAME, id, Member.class));
+        return Optional.ofNullable(TSCGDatabase.instance().get(Tables.MEMBERS.toString(), id, Member.class));
     }
 }

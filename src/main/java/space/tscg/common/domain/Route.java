@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum Route
 {
     CARRIER("/api/carrier"),
-    OAUTH("/api/ouath"),
-    CAPI("/internal/capi")
+    OAUTH("/api/oauth"),
+    CAPI("/api/capi")
     ;
 
     String route;

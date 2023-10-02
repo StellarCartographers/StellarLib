@@ -10,8 +10,8 @@ public enum Endpoint implements APIEndpoint
     API_CARRIER("/api/carrier"),
     OAUTH_CALLBACK("/api/oauth/callback"),
     OAUTH_AUTHLINK("/api/oauth/authorizationlink"),
-    CAPI_CARRIER("/internal/capi/carrier"),
-    CAPI_PROFILE("/internal/capi/profile"),
+    CAPI_CARRIER("/internal/capi/{}/carrier"),
+    CAPI_PROFILE("/internal/capi/{}/profile"),
     ;
 
     private Domain domain;
@@ -48,6 +48,14 @@ public enum Endpoint implements APIEndpoint
         return endpoint.split("/")[0];
     }
 
+    public HttpUrl toHttpUrl(String token)
+    {
+        String tokenized = endpoint.replaceAll("\\{\\}", token);
+        HttpUrl httpurl = HttpUrl.parse(APIEndpoint.super.getTemplate().formatted(getDomain(), tokenized));
+        setDomain(null);
+        return httpurl;
+    }
+    
     @Override
     public HttpUrl toHttpUrl()
     {

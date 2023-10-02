@@ -16,30 +16,27 @@
  */
 package space.tscg.common.db;
 
-import static com.rethinkdb.RethinkDB.r;
+import static com.rethinkdb.RethinkDB.*;
 
 import com.rethinkdb.gen.exc.ReqlAuthError;
 import com.rethinkdb.net.Connection;
 
-import space.tscg.common.db.modal.DbEntity;
+import space.tscg.api.database.DbEntity;
 import space.tscg.common.db.op.DeleteOperation;
 import space.tscg.common.db.op.InsertOperation;
 import space.tscg.common.db.op.ReplaceOperation;
 import space.tscg.common.db.op.UpdateOperation;
+import space.tscg.common.db.prefab.Tables;
 import space.tscg.common.dotenv.Dotenv;
 
-public abstract class Database
+public abstract class RethinkInterface
 {
     private DBCredentials credentials;
     private Connection    connection;
 
-    /**
-     * Instantiates a new database.
-     */
-    protected Database()
+    protected RethinkInterface()
     {
         this.credentials = buildDefault();
-        connection();
     }
 
     private DBCredentials buildDefault()
@@ -47,15 +44,9 @@ public abstract class Database
         return DBCredentials.builder().databaseName(Dotenv.get("database")).build();
     }
 
-    /**
-     * Instantiates a new database.
-     *
-     * @param credentials the credentials
-     */
-    protected Database(DBCredentials credentials)
+    protected RethinkInterface(DBCredentials credentials)
     {
         this.credentials = credentials;
-        connection();
     }
 
     /**
@@ -82,17 +73,22 @@ public abstract class Database
                 connection = this.credentials.getConnectionBuilder().connect();
             } catch (ReqlAuthError e)
             {
-                throw new ReqlAuthError("unknown user: " + this.credentials.getUsername());
+                throw new ReqlAuthError("RethinkDb Error: " + e.getMessage());
             }
         }
         return connection;
     }
 
+    public <T> T get(Tables table, String id, Class<T> type)
+    {
+        return get(table.toString(), id, type);
+    }
+    
     public <T> T get(String table, String id, Class<T> type)
     {
         return r.table(table).get(id).runAtom(connection(), type);
     }
-    
+
     /**
      * Deletes the object from the database.
      * <p>
@@ -103,7 +99,7 @@ public abstract class Database
      */
     public DeleteOperation delete(DbEntity object)
     {
-        return r.table(object.getTableName()).get(object.getId()).delete().runAtom(connection(), DeleteOperation.class);
+        return r.table(object.getTable().toString()).get(object.getId()).delete().runAtom(connection(), DeleteOperation.class);
     }
 
     /**
@@ -131,7 +127,15 @@ public abstract class Database
      */
     public InsertOperation create(DbEntity object)
     {
-        return r.table(object.getTableName()).insert(object).runAtom(connection(), InsertOperation.class);
+        return create(object, false);
+    }
+    
+    public InsertOperation create(DbEntity object, boolean returnChanges)
+    {
+        var insert = r.table(object.getTable().toString()).insert(object);
+        return (returnChanges) 
+            ? insert.optArg("return_changes", true).runAtom(connection(), InsertOperation.class) 
+            : insert.runAtom(connection(), InsertOperation.class);
     }
 
     /**
@@ -146,7 +150,7 @@ public abstract class Database
      */
     public void saveNoReply(DbEntity object)
     {
-        r.table(object.getTableName()).insert(object).optArg("conflict", "replace").runNoReply(connection());
+        r.table(object.getTable().toString()).insert(object).optArg("conflict", "replace").runNoReply(connection());
     }
 
     /**
@@ -162,7 +166,7 @@ public abstract class Database
      */
     public ReplaceOperation save(DbEntity object)
     {
-        return r.table(object.getTableName()).insert(object).optArg("conflict", "replace").runAtom(connection(), ReplaceOperation.class);
+        return r.table(object.getTable().toString()).insert(object).optArg("conflict", "replace").runAtom(connection(), ReplaceOperation.class);
     }
 
     /**
@@ -177,7 +181,7 @@ public abstract class Database
      */
     public void updateNoReply(DbEntity object)
     {
-        r.table(object.getTableName()).insert(object).optArg("conflict", "update").runNoReply(connection());
+        r.table(object.getTable().toString()).insert(object).optArg("conflict", "update").runNoReply(connection());
     }
 
     /**
@@ -193,6 +197,6 @@ public abstract class Database
      */
     public UpdateOperation update(DbEntity object)
     {
-        return r.table(object.getTableName()).insert(object).optArg("conflict", "update").runAtom(connection(), UpdateOperation.class);
+        return r.table(object.getTable().toString()).insert(object).optArg("conflict", "update").runAtom(connection(), UpdateOperation.class);
     }
 }

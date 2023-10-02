@@ -1,14 +1,14 @@
 package space.tscg.common.db.prefab;
 
-import static com.rethinkdb.RethinkDB.r;
+import static com.rethinkdb.RethinkDB.*;
 
 import com.rethinkdb.gen.ast.ReqlExpr;
 import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.Result;
 
-import space.tscg.common.db.Database;
+import space.tscg.common.db.RethinkInterface;
 
-public class TSCGDatabase extends Database
+public class TSCGDatabase extends RethinkInterface
 {
     private static final TSCGDatabase _instance = new TSCGDatabase();
 
