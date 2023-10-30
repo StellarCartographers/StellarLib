@@ -16,7 +16,7 @@
  */
 package space.tscg.api;
 
-import space.tscg.common.UpdatedValues;
+import space.tscg.collections.DiffMap;
 
 /**
  * Classes that inherit Diffable can have another instance of their type
@@ -32,5 +32,5 @@ public interface Diffable<T> {
      * @param other The same type to compare too
      * @return an UpdatedValues for this type
      */
-    UpdatedValues diff(T other);
+    DiffMap diff(T other);
 }

@@ -1,8 +1,14 @@
 package space.tscg.api.carrier;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import space.tscg.database.entity.CarrierServices;
+
 /**
  * Represents the collection of Services a FleetCarrier can have
  */
+@JsonDeserialize(as = CarrierServices.class)
 public interface ICarrierServices
 {
     
@@ -12,6 +18,14 @@ public interface ICarrierServices
      * @return ITaxableService
      */
     ITaxableService getRefuel();
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isRefuelInstalled();
 
     /**
      * Returns the repair Service.
@@ -21,11 +35,27 @@ public interface ICarrierServices
     ITaxableService getRepair();
 
     /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isRepairInstalled();
+    
+    /**
      * Returns the armoury Service.
      *
      * @return ITaxableService
      */
     ITaxableService getArmoury();
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isArmouryInstalled();
 
     /**
      * Returns the redemption office Service.
@@ -33,14 +63,30 @@ public interface ICarrierServices
      * @return IService
      */
     IService getRedemptionOffice();
-
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isRedemptionOfficeInstalled();
+    
     /**
      * Returns the shipyard Service.
      *
      * @return ITaxableService
      */
     ITaxableService getShipyard();
-
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isShipyardInstalled();
+    
     /**
      * Returns the outfitting Service.
      *
@@ -48,6 +94,15 @@ public interface ICarrierServices
      */
     ITaxableService getOutfitting();
 
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isOutfittingInstalled();
+    
     /**
      * Returns the secure warehouse Service.
      *
@@ -56,12 +111,29 @@ public interface ICarrierServices
     IService getSecureWarehouse();
 
     /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isSecureWarehouseInstalled();
+    
+    /**
      * Returns the universal cartographics Service.
      *
      * @return IService
      */
     IService getUniversalCartographics();
 
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isUniversalCartographicsInstalled();
+    
     /**
      * Returns the concourse bar Service.
      *
@@ -69,6 +141,15 @@ public interface ICarrierServices
      */
     IService getConcourseBar();
 
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isConcourseBarInstalled();
+    
     /**
      * Returns the vista genomics Service.
      *
@@ -76,10 +157,28 @@ public interface ICarrierServices
      */
     IService getVistaGenomics();
 
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isVistaGenomicsInstalled();
+    
     /**
      * Returns the pioneer supplies Service.
      *
      * @return ITaxableService
      */
     ITaxableService getPioneerSupplies();
+    
+    
+    /**
+     * If this service is installed
+     * 
+     * @return true if installed, false if not
+     */
+    @JsonIgnore
+    boolean isPioneerSuppliesInstalled();
 }

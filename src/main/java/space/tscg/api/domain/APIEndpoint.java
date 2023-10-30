@@ -3,7 +3,7 @@ package space.tscg.api.domain;
 import java.net.URI;
 
 import okhttp3.HttpUrl;
-import space.tscg.common.domain.Domain;
+import space.tscg.web.domain.Domain;
 
 public interface APIEndpoint
 {

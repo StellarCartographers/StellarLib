@@ -1,8 +1,13 @@
 package space.tscg.api.carrier;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import space.tscg.database.entity.CarrierServices.Service;
+
 /**
  * A toggleable service that is accessible on fleetcarriers
  */
+@JsonDeserialize(as = Service.class)
 public interface IService
 {
     /**

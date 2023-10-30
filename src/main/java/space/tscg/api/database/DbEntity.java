@@ -18,12 +18,12 @@ package space.tscg.api.database;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import space.tscg.common.db.prefab.Tables;
+import space.tscg.database.DefinedTable;
 
 public interface DbEntity
 {
     String getId();
 
     @JsonIgnore
-    Tables getTable();
+    DefinedTable getTable();
 }

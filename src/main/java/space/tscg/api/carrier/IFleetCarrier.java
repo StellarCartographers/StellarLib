@@ -1,9 +1,15 @@
 package space.tscg.api.carrier;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import elite.dangerous.capi.modal.fleetcarrier.Orders;
+import space.tscg.database.entity.FleetCarrier;
+
 /**
  * Represents very basic information about a Fleet Carrier, all implementations should be able to return
  * all the information contained in this interface.
  */
+@JsonDeserialize(as = FleetCarrier.class)
 public interface IFleetCarrier
 {
     /**
@@ -11,7 +17,7 @@ public interface IFleetCarrier
      *
      * @return {@code Carrier ID, aka Carrier Market ID}
      */
-    String getCarrierId();
+    String getId();
     
     /**
      * Returns the Carrier's callsign.
@@ -42,9 +48,23 @@ public interface IFleetCarrier
     int getFuel();
     
     /**
-     * Returns an instance of {@link ICarrierServices}, holds all possible Services a carrier can have enabled
+     * Returns an instance of {@link ICarrierServices}
      *
-     * @return the services
+     * @return ICarrierServices instance
      */
     ICarrierServices getServices();
+    
+    /**
+     * Returns an instance of {@link Orders}
+     *
+     * @return Orders instance
+     */
+    Orders getOrders();
+    
+    /**
+     * Returns an instance of {@link ICarrierMarket}
+     *
+     * @return ICarrierMarket instance
+     */
+    ICarrierMarket getMarket();
 }
