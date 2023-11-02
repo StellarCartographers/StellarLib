@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.jackson.Jacksonized;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import space.tscg.api.database.DbEntity;
 import space.tscg.database.DefinedTable;
 import space.tscg.database.defined.TSCGDatabase;
@@ -42,7 +43,12 @@ public class TSCGMember implements DbEntity
     {
         return DefinedTable.MEMBERS;
     }
-
+    
+    public static TSCGMember fromUserSnowflake(UserSnowflake snowflake)
+    {
+        return get(snowflake.getId()).orElseThrow();
+    }
+    
     public static Optional<TSCGMember> get(String id)
     {
         return Optional.ofNullable(TSCGDatabase.instance().get(DefinedTable.MEMBERS, id, TSCGMember.class));

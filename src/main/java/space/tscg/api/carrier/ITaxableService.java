@@ -2,13 +2,14 @@ package space.tscg.api.carrier;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import space.tscg.api.Diffable;
 import space.tscg.database.entity.CarrierServices.TaxableService;
 
 /**
  * A tax-rate configurable service that is accessible on fleetcarriers 
  */
 @JsonDeserialize(as = TaxableService.class)
-public interface ITaxableService
+public interface ITaxableService extends Diffable<ITaxableService>
 {
     /**
      * If this service is installed and publically available

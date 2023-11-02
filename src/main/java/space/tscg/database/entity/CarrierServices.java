@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
-import space.tscg.api.Diffable;
 import space.tscg.api.carrier.ICarrierServices;
 import space.tscg.api.carrier.IService;
 import space.tscg.api.carrier.ITaxableService;
@@ -20,7 +19,7 @@ import space.tscg.collections.DiffMap;
 @Getter
 @Builder(builderMethodName = "Builder")
 @Jacksonized
-public class CarrierServices implements ICarrierServices, Diffable<CarrierServices>
+public class CarrierServices implements ICarrierServices
 {
     @Builder.Default
     private TaxableService refuel = null;
@@ -133,7 +132,7 @@ public class CarrierServices implements ICarrierServices, Diffable<CarrierServic
     }
 
     @Override
-    public DiffMap diff(CarrierServices other)
+    public DiffMap diff(ICarrierServices other)
     {
         var diff = DiffMap.Builder();
         if(this.refuel != null)
@@ -165,11 +164,11 @@ public class CarrierServices implements ICarrierServices, Diffable<CarrierServic
     @Getter
     @Builder(builderMethodName = "Creator")
     @Jacksonized
-    public static class Service implements IService, Diffable<Service> {
+    public static class Service implements IService {
         private boolean enabled;
         
         @Override
-        public DiffMap diff(Service other) {
+        public DiffMap diff(IService other) {
             return DiffMap
                 .Builder()
                     .append("active", this.isEnabled(), other.isEnabled())
@@ -180,12 +179,12 @@ public class CarrierServices implements ICarrierServices, Diffable<CarrierServic
     @Getter
     @Builder(builderMethodName = "Creator")
     @Jacksonized
-    public static class TaxableService implements ITaxableService, Diffable<TaxableService> {
+    public static class TaxableService implements ITaxableService {
         private boolean enabled;
         private int tax;
         
         @Override
-        public DiffMap diff(TaxableService other) {
+        public DiffMap diff(ITaxableService other) {
             return DiffMap
                 .Builder()
                     .append("enabled", this.isEnabled(), other.isEnabled())

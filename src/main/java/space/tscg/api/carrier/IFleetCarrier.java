@@ -1,16 +1,25 @@
 package space.tscg.api.carrier;
 
+import java.util.Optional;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import elite.dangerous.capi.FleetCarrierData;
 import elite.dangerous.capi.modal.fleetcarrier.Orders;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import space.tscg.api.Diffable;
+import space.tscg.api.database.DbEntity;
+import space.tscg.database.DefinedTable;
+import space.tscg.database.defined.TSCGDatabase;
 import space.tscg.database.entity.FleetCarrier;
+import space.tscg.database.entity.TSCGMember;
 
 /**
  * Represents very basic information about a Fleet Carrier, all implementations should be able to return
  * all the information contained in this interface.
  */
 @JsonDeserialize(as = FleetCarrier.class)
-public interface IFleetCarrier
+public interface IFleetCarrier extends DbEntity, Diffable<IFleetCarrier>
 {
     /**
      * Returns the carrier's id. This is the Market ID for the carrier
@@ -67,4 +76,24 @@ public interface IFleetCarrier
      * @return ICarrierMarket instance
      */
     ICarrierMarket getMarket();
+    
+    static IFleetCarrier fromFleetCarrierData(FleetCarrierData data)
+    {
+        return Builder.build(data);
+    }
+    
+    static Optional<IFleetCarrier> fromId(String id)
+    {
+        return Optional.ofNullable(TSCGDatabase.instance().get(DefinedTable.CARRIERS, id, IFleetCarrier.class));
+    }
+    
+    static IFleetCarrier fromMmember(TSCGMember member)
+    {
+        return TSCGDatabase.instance().get(DefinedTable.CARRIERS, member.getElite().getCarrierId(), IFleetCarrier.class);
+    }
+    
+    static IFleetCarrier fromUserSnowflake(UserSnowflake snowflake)
+    {
+        return TSCGDatabase.instance().get(DefinedTable.CARRIERS, TSCGMember.fromUserSnowflake(snowflake).getElite().getCarrierId(), IFleetCarrier.class);
+    }
 }

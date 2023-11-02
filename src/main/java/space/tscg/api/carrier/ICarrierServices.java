@@ -3,13 +3,14 @@ package space.tscg.api.carrier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import space.tscg.api.Diffable;
 import space.tscg.database.entity.CarrierServices;
 
 /**
  * Represents the collection of Services a FleetCarrier can have
  */
 @JsonDeserialize(as = CarrierServices.class)
-public interface ICarrierServices
+public interface ICarrierServices extends Diffable<ICarrierServices>
 {
     
     /**
