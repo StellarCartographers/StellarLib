@@ -1,6 +1,7 @@
 import space.tscg.gradle.Shared
 
 plugins {
+    id "com.autonomousapps.dependency-analysis" version "1.29.0"
     id 'com.diffplug.spotless' version '6.+'
     id 'io.freefair.lombok' version '8.+'
     id 'tscg.defaults' version '2.2.2'
@@ -34,7 +35,9 @@ spotless {
 }
 
 dependencies {
-    api Shared.Deps().Jackson()
+    api Shared.Deps().JacksonCore()
+    api Shared.Deps().JacksonAnnotations()
+    api Shared.Deps().JacksonDatabind()
     api Shared.Deps().RethinkDb()
     api Shared.Deps().Expressible()
     
@@ -42,7 +45,7 @@ dependencies {
     compileOnly Shared.Deps().OAuthSdk()
     compileOnly Shared.Deps().Javalin()
     compileOnly Shared.Deps().OkHttp3()
-    compileOnly Shared.Deps().TinyLog()
+    compileOnly Shared.Deps().TinyLogApi()
     compileOnly('net.dv8tion:JDA:latest.integration') { exclude module: 'opus-java' }
     
     implementation Shared.Deps().Environment()
