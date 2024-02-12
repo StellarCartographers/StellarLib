@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.map;
 
 import java.lang.reflect.Array;
@@ -9,6 +15,7 @@ import java.util.function.Predicate;
 
 import space.tscg.collections.Unalterable;
 import space.tscg.collections.decorator.IteratorDecorator;
+import space.tscg.collections.decorator.MapEntryDecorator;
 import space.tscg.collections.decorator.SetDecorator;
 
 public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V>> implements Unalterable
@@ -18,23 +25,24 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
     /**
      * Factory method to create an unmodifiable set of Map Entry objects.
      *
-     * @param <K>
-     *            the key type
-     * @param <V>
-     *            the value type
-     * @param set
-     *            the set to decorate, must not be null
+     * @param  <K>
+     *                                  the key type
+     * @param  <V>
+     *                                  the value type
+     * @param  set
+     *                                  the set to decorate, must not be null
      * 
-     * @return a new unmodifiable entry set
+     * @return                      a new unmodifiable entry set
      * 
      * @throws NullPointerException
-     *             if set is null
+     *                                  if set is null
      * 
-     * @since 4.0
+     * @since                       4.0
      */
     public static <K, V> Set<Map.Entry<K, V>> unalterableEntrySet(final Set<Map.Entry<K, V>> set)
     {
-        if (set instanceof Unalterable) {
+        if (set instanceof Unalterable)
+        {
             return set;
         }
         return new UnalterableEntrySet<>(set);
@@ -43,11 +51,11 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
     /**
      * Constructor that wraps (not copies).
      *
-     * @param set
-     *            the set to decorate, must not be null
+     * @param  set
+     *                                  the set to decorate, must not be null
      * 
      * @throws NullPointerException
-     *             if set is null
+     *                                  if set is null
      */
     private UnalterableEntrySet(final Set<Map.Entry<K, V>> set)
     {
@@ -110,7 +118,8 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
     public Object[] toArray()
     {
         final Object[] array = decorated().toArray();
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++)
+        {
             array[i] = new UnmodifiableEntry((Map.Entry<K, V>) array[i]);
         }
         return array;
@@ -121,24 +130,26 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
     public <T> T[] toArray(final T[] array)
     {
         Object[] result = array;
-        if (array.length > 0) {
+        if (array.length > 0)
+        {
             // we must create a new array to handle multithreaded situations
             // where another thread could access data before we decorate it
             result = (Object[]) Array.newInstance(array.getClass().getComponentType(), 0);
         }
         result = decorated().toArray(result);
-        for (int i = 0; i < result.length; i++) {
+        for (int i = 0; i < result.length; i++)
+        {
             result[i] = new UnmodifiableEntry((Map.Entry<K, V>) result[i]);
         }
-
         // check to see if result should be returned straight
-        if (result.length > array.length) {
+        if (result.length > array.length)
+        {
             return (T[]) result;
         }
-
         // copy back into input array to fulfill the method contract
         System.arraycopy(result, 0, array, 0, result.length);
-        if (array.length > result.length) {
+        if (array.length > result.length)
+        {
             array[result.length] = null;
         }
         return array;
@@ -149,7 +160,6 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
      */
     private class UnmodifiableEntrySetIterator extends IteratorDecorator<Map.Entry<K, V>>
     {
-
         protected UnmodifiableEntrySetIterator(final Iterator<Map.Entry<K, V>> iterator)
         {
             super(iterator);
@@ -173,7 +183,6 @@ public final class UnalterableEntrySet<K, V> extends SetDecorator<Map.Entry<K, V
      */
     private class UnmodifiableEntry extends MapEntryDecorator<K, V>
     {
-
         protected UnmodifiableEntry(final Map.Entry<K, V> entry)
         {
             super(entry);

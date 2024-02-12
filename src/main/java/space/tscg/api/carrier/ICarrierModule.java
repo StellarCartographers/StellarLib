@@ -1,31 +1,36 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.api.carrier;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import elite.dangerous.fdevid.Outfitting.Category;
-import elite.dangerous.fdevid.Outfitting.Guidance;
-import elite.dangerous.fdevid.Outfitting.Mount;
-import elite.dangerous.fdevid.Outfitting.Rating;
-import space.tscg.database.entity.CarrierMarket.CarrierModule;
+import elite.dangerous.fdev.Outfitting.*;
 
-@JsonDeserialize(as = CarrierModule.class)
+import space.tscg.carrrier.ModuleImpl;
+import space.tscg.misc.FDevID;
+
+@JsonDeserialize(as = ModuleImpl.class)
 public interface ICarrierModule
 {
-    int getFdevId();
-    
-    Category getCategory();
-    
-    String getName();
-    
-    Mount getMount();
-    
-    Guidance getGuidance();
-    
-    int getModuleClass();
-    
-    Rating getRating();
-    
-    int getCost();
-    
-    int getStock();
+    FDevID id();
+
+    Category category();
+
+    String name();
+
+    Mount mount();
+
+    Guidance guidance();
+
+    int moduleClass();
+
+    Rating rating();
+
+    int cost();
+
+    int stock();
 }

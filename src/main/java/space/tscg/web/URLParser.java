@@ -1,12 +1,18 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.web;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.Getter;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import lombok.Getter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class URLParser
 {
@@ -14,9 +20,7 @@ public final class URLParser
     final String          localhostRegex    = "(?<host>localhost)(?:\\:(?<port>[0-9]{1,5}))?";
     private final Pattern URL_PATTERN       = Pattern.compile(regex);
     private final Pattern LOCALHOST_PATTERN = Pattern.compile(localhostRegex);
-    
-    private Matcher localhostMatcher;
-    
+    private Matcher       localhostMatcher;
     private final boolean matchFound;
     private String        fullMatch;
     @Getter
@@ -32,14 +36,15 @@ public final class URLParser
 
     public URLParser(String url)
     {
-        if(this.localhostMatching(url))
+        if (this.localhostMatching(url))
         {
             this.matchFound = true;
             this.scheme = "http://";
             this.host = "localhost";
             this.port = localhostMatcher.group("port");
             this.fullMatch = localhostMatcher.group();
-        } else {
+        } else
+        {
             Matcher matcher = URL_PATTERN.matcher(url);
             this.matchFound = matcher.find();
             this.scheme = matcher.group("scheme");
@@ -91,16 +96,10 @@ public final class URLParser
     {
         return (params != null);
     }
-    
+
     @Override
     public String toString()
     {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append(this.scheme)
-            .append(this.host)
-            .append(this.port)
-            .append(this.path)
-            .append(this.params)
-            .append(this.fullMatch).build();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.scheme).append(this.host).append(this.port).append(this.path).append(this.params).append(this.fullMatch).build();
     }
 }

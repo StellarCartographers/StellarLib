@@ -1,6 +1,16 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.web;
 
-import java.io.IOException;
+import io.javalin.http.HttpStatus;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -10,11 +20,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import io.javalin.http.HttpStatus;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
+import java.io.IOException;
+
 import space.tscg.api.JsonWrapper;
 import space.tscg.collections.Data;
 import space.tscg.misc.json.StellarMapper;
@@ -38,7 +45,7 @@ public class HttpState implements JsonWrapper
         this.data = data;
         return this;
     }
-    
+
     @Override
     public String toJson()
     {
@@ -46,10 +53,10 @@ public class HttpState implements JsonWrapper
     }
 
     @UtilityClass
-    public static final class HttpStateAdapter {
-        
-        public static class Serializer extends StdSerializer<HttpState> {
-
+    public static final class HttpStateAdapter
+    {
+        public static class Serializer extends StdSerializer<HttpState>
+        {
             private static final long serialVersionUID = 9115662983758042660L;
 
             protected Serializer()
@@ -62,9 +69,9 @@ public class HttpState implements JsonWrapper
             {
             }
         }
-        
-        public static class Deserializer extends StdDeserializer<HttpState> {
 
+        public static class Deserializer extends StdDeserializer<HttpState>
+        {
             private static final long serialVersionUID = 5873054711350065553L;
 
             protected Deserializer()
@@ -77,7 +84,6 @@ public class HttpState implements JsonWrapper
             {
                 return null;
             }
-            
         }
     }
 }

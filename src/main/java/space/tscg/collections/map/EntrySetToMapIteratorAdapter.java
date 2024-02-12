@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.map;
 
 import java.util.Iterator;
@@ -11,10 +17,8 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
 {
     /** The adapted Map entry Set. */
     final Set<Map.Entry<K, V>>          entrySet;
-
     /** The resettable iterator in use. */
     transient Iterator<Map.Entry<K, V>> iterator;
-
     /** The currently positioned Map entry. */
     transient Map.Entry<K, V>           entry;
 
@@ -22,7 +26,7 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
      * Create a new EntrySetToMapIteratorAdapter.
      * 
      * @param entrySet
-     *            the entrySet to adapt
+     *                     the entrySet to adapt
      */
     public EntrySetToMapIteratorAdapter(final Set<Map.Entry<K, V>> entrySet)
     {
@@ -102,7 +106,8 @@ public class EntrySetToMapIteratorAdapter<K, V> implements MapIterator<K, V>, Re
      */
     protected synchronized Map.Entry<K, V> current()
     {
-        if (entry == null) {
+        if (entry == null)
+        {
             throw new IllegalStateException();
         }
         return entry;

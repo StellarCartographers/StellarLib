@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        mavenLocal()
         maven {
             name 'EzGradle'
             url 'https://ezgradle.site/global'

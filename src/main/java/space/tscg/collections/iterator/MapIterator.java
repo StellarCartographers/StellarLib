@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.iterator;
 
 import java.util.Iterator;
@@ -15,10 +21,10 @@ public interface MapIterator<K, V> extends Iterator<K>
     /**
      * Gets the next <em>key</em> from the {@code Map}.
      *
-     * @return the next key in the iteration
+     * @return                                  the next key in the iteration
      * 
      * @throws java.util.NoSuchElementException
-     *             if the iteration is finished
+     *                                              if the iteration is finished
      */
     @Override
     K next();
@@ -27,10 +33,10 @@ public interface MapIterator<K, V> extends Iterator<K>
      * Gets the current key, which is the key returned by the last call
      * to {@code next()}.
      *
-     * @return the current key
+     * @return                       the current key
      * 
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                   if {@code next()} has not yet been called
      */
     K getKey();
 
@@ -38,10 +44,10 @@ public interface MapIterator<K, V> extends Iterator<K>
      * Gets the current value, which is the value associated with the last key
      * returned by {@code next()}.
      *
-     * @return the current value
+     * @return                       the current value
      * 
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                   if {@code next()} has not yet been called
      */
     V getValue();
 
@@ -51,12 +57,12 @@ public interface MapIterator<K, V> extends Iterator<K>
      * This method can be called once per call to {@code next()}.
      *
      * @throws UnsupportedOperationException
-     *             if remove is not supported by the map
+     *                                           if remove is not supported by the map
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                           if {@code next()} has not yet been called
      * @throws IllegalStateException
-     *             if {@code remove()} has already been called
-     *             since the last call to {@code next()}
+     *                                           if {@code remove()} has already been called
+     *                                           since the last call to {@code next()}
      */
     @Override
     void remove();
@@ -64,18 +70,18 @@ public interface MapIterator<K, V> extends Iterator<K>
     /**
      * Sets the value associated with the current key (optional operation).
      *
-     * @param value
-     *            the new value
+     * @param  value
+     *                                           the new value
      * 
-     * @return the previous value
+     * @return                               the previous value
      * 
      * @throws UnsupportedOperationException
-     *             if setValue is not supported by the map
+     *                                           if setValue is not supported by the map
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                           if {@code next()} has not yet been called
      * @throws IllegalStateException
-     *             if {@code remove()} has been called since the
-     *             last call to {@code next()}
+     *                                           if {@code remove()} has been called since the
+     *                                           last call to {@code next()}
      */
     V setValue(V value);
 }

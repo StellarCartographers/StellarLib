@@ -1,11 +1,17 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.database.operation;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class UpdateOperation implements Operation<UpdateOperation>
@@ -17,13 +23,13 @@ public class UpdateOperation implements Operation<UpdateOperation>
     @JsonProperty("first_error")
     private String             firstError;
     private String             warnings;
-    
+
     @Override
     public UpdateOperation get()
     {
         return this;
     }
-    
+
     @Override
     public boolean operationSucceded()
     {

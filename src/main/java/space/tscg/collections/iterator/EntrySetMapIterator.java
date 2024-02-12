@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.iterator;
 
 import java.util.Iterator;
@@ -14,7 +20,7 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
      * Constructor.
      *
      * @param map
-     *            the map to iterate over
+     *                the map to iterate over
      */
     public EntrySetMapIterator(final Map<K, V> map)
     {
@@ -36,10 +42,10 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
     /**
      * Gets the next <em>key</em> from the {@code Map}.
      *
-     * @return the next key in the iteration
+     * @return                                  the next key in the iteration
      * 
      * @throws java.util.NoSuchElementException
-     *             if the iteration is finished
+     *                                              if the iteration is finished
      */
     @Override
     public K next()
@@ -55,17 +61,18 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
      * This method can be called once per call to {@code next()}.
      *
      * @throws UnsupportedOperationException
-     *             if remove is not supported by the map
+     *                                           if remove is not supported by the map
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                           if {@code next()} has not yet been called
      * @throws IllegalStateException
-     *             if {@code remove()} has already been called
-     *             since the last call to {@code next()}
+     *                                           if {@code remove()} has already been called
+     *                                           since the last call to {@code next()}
      */
     @Override
     public void remove()
     {
-        if (!canRemove) {
+        if (!canRemove)
+        {
             throw new IllegalStateException("Iterator remove() can only be called once after next()");
         }
         iterator.remove();
@@ -77,15 +84,16 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
      * Gets the current key, which is the key returned by the last call
      * to {@code next()}.
      *
-     * @return the current key
+     * @return                       the current key
      * 
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                   if {@code next()} has not yet been called
      */
     @Override
     public K getKey()
     {
-        if (last == null) {
+        if (last == null)
+        {
             throw new IllegalStateException("Iterator getKey() can only be called after next() and before remove()");
         }
         return last.getKey();
@@ -95,15 +103,16 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
      * Gets the current value, which is the value associated with the last key
      * returned by {@code next()}.
      *
-     * @return the current value
+     * @return                       the current value
      * 
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                   if {@code next()} has not yet been called
      */
     @Override
     public V getValue()
     {
-        if (last == null) {
+        if (last == null)
+        {
             throw new IllegalStateException("Iterator getValue() can only be called after next() and before remove()");
         }
         return last.getValue();
@@ -112,23 +121,24 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
     /**
      * Sets the value associated with the current key.
      *
-     * @param value
-     *            the new value
+     * @param  value
+     *                                           the new value
      * 
-     * @return the previous value
+     * @return                               the previous value
      * 
      * @throws UnsupportedOperationException
-     *             if setValue is not supported by the map
+     *                                           if setValue is not supported by the map
      * @throws IllegalStateException
-     *             if {@code next()} has not yet been called
+     *                                           if {@code next()} has not yet been called
      * @throws IllegalStateException
-     *             if {@code remove()} has been called since the
-     *             last call to {@code next()}
+     *                                           if {@code remove()} has been called since the
+     *                                           last call to {@code next()}
      */
     @Override
     public V setValue(final V value)
     {
-        if (last == null) {
+        if (last == null)
+        {
             throw new IllegalStateException("Iterator setValue() can only be called after next() and before remove()");
         }
         return last.setValue(value);
@@ -153,7 +163,8 @@ public class EntrySetMapIterator<K, V> implements MapIterator<K, V>, ResettableI
     @Override
     public String toString()
     {
-        if (last != null) {
+        if (last != null)
+        {
             return "MapIterator[" + getKey() + "=" + getValue() + "]";
         }
         return "MapIterator[]";

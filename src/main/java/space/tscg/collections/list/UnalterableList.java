@@ -1,31 +1,30 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.list;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.Unmodifiable;
-
 import space.tscg.collections.Unalterable;
 import space.tscg.collections.decorator.SerializableListDecorator;
 import space.tscg.collections.iterator.UnalterableIterator;
 import space.tscg.collections.iterator.UnalterableListIterator;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UnalterableList<E> extends SerializableListDecorator<E> implements Unalterable
 {
     private static final long serialVersionUID = 3135461913828697256L;
-
-    public static <E> List<E> unmodifiableList(final List<? extends E> list)
-    {
-        if (list instanceof Unmodifiable) {
-            @SuppressWarnings("unchecked") // safe to upcast
-            final List<E> tmpList = (List<E>) list;
-            return tmpList;
-        }
-        return new UnalterableList<>(list);
-    }
 
     @SuppressWarnings("unchecked") // safe to upcast
     public UnalterableList(final List<? extends E> list)
@@ -122,5 +121,27 @@ public class UnalterableList<E> extends SerializableListDecorator<E> implements 
     {
         final List<E> sub = decorated().subList(fromIndex, toIndex);
         return new UnalterableList<>(sub);
+    }
+
+    public static <E> Builder<E> Builder()
+    {
+        return new Builder<E>();
+    }
+
+    public static class Builder<E> implements space.tscg.collections.Builder<UnalterableList<E>>
+    {
+        private List<E> builderList = new ArrayList<>();
+
+        public Builder<E> add(E e)
+        {
+            this.builderList.add(e);
+            return this;
+        }
+
+        @Override
+        public UnalterableList<E> build()
+        {
+            return new UnalterableList<E>(builderList);
+        }
     }
 }

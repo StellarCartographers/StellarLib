@@ -1,18 +1,19 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.api.carrier;
-
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import elite.dangerous.capi.FleetCarrierData;
-import elite.dangerous.capi.modal.fleetcarrier.Orders;
-import net.dv8tion.jda.api.entities.UserSnowflake;
+import elite.dangerous.capi.modal.fc.orders.Orders;
+
 import space.tscg.api.Diffable;
 import space.tscg.api.database.DbEntity;
-import space.tscg.database.DefinedTable;
-import space.tscg.database.defined.TSCGDatabase;
 import space.tscg.database.entity.FleetCarrier;
-import space.tscg.database.entity.TSCGMember;
 
 /**
  * Represents very basic information about a Fleet Carrier, all implementations should be able to return
@@ -26,74 +27,59 @@ public interface IFleetCarrier extends DbEntity, Diffable<IFleetCarrier>
      *
      * @return {@code Carrier ID, aka Carrier Market ID}
      */
-    String getId();
-    
+    String id();
+
     /**
      * Returns the Carrier's callsign.
      *
      * @return {@code Carrier Callsign}
      */
-    String getCallsign();
-    
+    String callsign();
+
     /**
      * Returns the carrier's name.
      *
      * @return the carrier's name
      */
-    String getName();
-    
+    String name();
+
     /**
      * Returns last known system the carrier was located in
      *
      * @return the current system
      */
-    String getSystem();
-    
+    String system();
+
     /**
      * Returns the last known Tritium fuel count
      *
      * @return fuel count
      */
-    int getFuel();
-    
+    int fuel();
+
     /**
      * Returns an instance of {@link ICarrierServices}
      *
      * @return ICarrierServices instance
      */
-    ICarrierServices getServices();
-    
+    ICarrierServices services();
+
     /**
      * Returns an instance of {@link Orders}
      *
      * @return Orders instance
      */
-    Orders getOrders();
-    
+    Orders orders();
+
     /**
      * Returns an instance of {@link ICarrierMarket}
      *
      * @return ICarrierMarket instance
      */
-    ICarrierMarket getMarket();
-    
+    ICarrierMarket market();
+
     static IFleetCarrier fromFleetCarrierData(FleetCarrierData data)
     {
         return Builder.build(data);
-    }
-    
-    static Optional<IFleetCarrier> fromId(String id)
-    {
-        return Optional.ofNullable(TSCGDatabase.instance().get(DefinedTable.CARRIERS, id, IFleetCarrier.class));
-    }
-    
-    static IFleetCarrier fromMmember(TSCGMember member)
-    {
-        return TSCGDatabase.instance().get(DefinedTable.CARRIERS, member.getElite().getCarrierId(), IFleetCarrier.class);
-    }
-    
-    static IFleetCarrier fromUserSnowflake(UserSnowflake snowflake)
-    {
-        return TSCGDatabase.instance().get(DefinedTable.CARRIERS, TSCGMember.fromUserSnowflake(snowflake).getElite().getCarrierId(), IFleetCarrier.class);
     }
 }

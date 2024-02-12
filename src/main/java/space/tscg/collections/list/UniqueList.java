@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.list;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import space.tscg.collections.ListUtility;
 import space.tscg.collections.decorator.IteratorDecorator;
 import space.tscg.collections.decorator.ListIteratorDecorator;
 import space.tscg.collections.decorator.SerializableListDecorator;
@@ -19,22 +24,8 @@ import space.tscg.collections.set.UnalterableSet;
 
 public class UniqueList<E> extends SerializableListDecorator<E>
 {
-
     private static final long serialVersionUID = -6589293803395027035L;
     private final Set<E>      set;
-
-    public static <E> UniqueList<E> uniqueList(final List<E> list)
-    {
-        Objects.requireNonNull(list, "list");
-        if (list.isEmpty()) {
-            return new UniqueList<>(list, new HashSet<>());
-        }
-        final List<E> temp = new ArrayList<>(list);
-        list.clear();
-        final UniqueList<E> sl = new UniqueList<>(list, new HashSet<>());
-        sl.addAll(temp);
-        return sl;
-    }
 
     protected UniqueList(final List<E> list, final Set<E> set)
     {
@@ -51,16 +42,15 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     public boolean add(final E object)
     {
         final int sizeBefore = size();
-
         add(size(), object);
-
         return sizeBefore != size();
     }
 
     @Override
     public void add(final int index, final E object)
     {
-        if (!set.contains(object)) {
+        if (!set.contains(object))
+        {
             set.add(object);
             super.add(index, object);
         }
@@ -76,8 +66,10 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     public boolean addAll(final int index, final Collection<? extends E> coll)
     {
         final List<E> temp = new ArrayList<>();
-        for (final E e : coll) {
-            if (set.add(e)) {
+        for (final E e : coll)
+        {
+            if (set.add(e))
+            {
                 temp.add(e);
             }
         }
@@ -89,14 +81,12 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     {
         final int pos = indexOf(object);
         final E removed = super.set(index, object);
-
-        if (pos != -1 && pos != index) {
+        if (pos != -1 && pos != index)
+        {
             super.remove(pos);
         }
-
         set.remove(removed);
         set.add(object);
-
         return removed;
     }
 
@@ -104,7 +94,8 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     public boolean remove(final Object object)
     {
         final boolean result = set.remove(object);
-        if (result) {
+        if (result)
+        {
             super.remove(object);
         }
         return result;
@@ -130,7 +121,8 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     public boolean removeAll(final Collection<?> coll)
     {
         boolean result = false;
-        for (final Object name : coll) {
+        for (final Object name : coll)
+        {
             result |= remove(name);
         }
         return result;
@@ -140,12 +132,15 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     public boolean retainAll(final Collection<?> coll)
     {
         final boolean result = set.retainAll(coll);
-        if (!result) {
+        if (!result)
+        {
             return false;
         }
-        if (set.isEmpty()) {
+        if (set.isEmpty())
+        {
             super.clear();
-        } else {
+        } else
+        {
             super.retainAll(set);
         }
         return result;
@@ -193,19 +188,23 @@ public class UniqueList<E> extends SerializableListDecorator<E>
     {
         final List<E> superSubList = super.subList(fromIndex, toIndex);
         final Set<E> subSet = createSetBasedOnList(set, superSubList);
-        return ListUtility.unalterableList(new UniqueList<>(superSubList, subSet));
+        return new UnalterableList<>(new UniqueList<>(superSubList, subSet));
     }
 
     @SuppressWarnings("unchecked")
     protected Set<E> createSetBasedOnList(final Set<E> set, final List<E> list)
     {
         Set<E> subSet;
-        if (set.getClass().equals(HashSet.class)) {
+        if (set.getClass().equals(HashSet.class))
+        {
             subSet = new HashSet<>(list.size());
-        } else {
-            try {
+        } else
+        {
+            try
+            {
                 subSet = set.getClass().getDeclaredConstructor(set.getClass()).newInstance(set);
-            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ie) {
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ie)
+            {
                 subSet = new HashSet<>();
             }
         }
@@ -215,7 +214,6 @@ public class UniqueList<E> extends SerializableListDecorator<E>
 
     static class SetListIterator<E> extends IteratorDecorator<E>
     {
-
         private final Set<E> set;
         private E            last;
 
@@ -243,7 +241,6 @@ public class UniqueList<E> extends SerializableListDecorator<E>
 
     static class SetListListIterator<E> extends ListIteratorDecorator<E>
     {
-
         private final Set<E> set;
         private E            last;
 
@@ -278,7 +275,8 @@ public class UniqueList<E> extends SerializableListDecorator<E>
         @Override
         public void add(final E object)
         {
-            if (!set.contains(object)) {
+            if (!set.contains(object))
+            {
                 super.add(object);
                 set.add(object);
             }
@@ -291,4 +289,25 @@ public class UniqueList<E> extends SerializableListDecorator<E>
         }
     }
 
+    public static <E> Builder<E> Builder()
+    {
+        return new Builder<E>();
+    }
+
+    public static class Builder<E> implements space.tscg.collections.Builder<UniqueList<E>>
+    {
+        private List<E> builderList = new ArrayList<>();
+
+        public Builder<E> add(E e)
+        {
+            this.builderList.add(e);
+            return this;
+        }
+
+        @Override
+        public UniqueList<E> build()
+        {
+            return new UniqueList<E>(builderList, new HashSet<>());
+        }
+    }
 }

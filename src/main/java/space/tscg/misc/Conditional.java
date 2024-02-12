@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.misc;
 
 import java.io.Serializable;
@@ -7,10 +13,11 @@ public class Conditional
 {
     public static Predicate<Boolean> alwaysTrue = Boolean::booleanValue;
 
-    public static <T extends Object> Predicate<T> instanceOf(Class<?> clazz) {
+    public static <T extends Object> Predicate<T> instanceOf(Class<?> clazz)
+    {
         return new InstanceOfPredicate<>(clazz);
-      }
-    
+    }
+
     private static class InstanceOfPredicate<T extends Object> implements Predicate<T>, Serializable
     {
         private final Class<?> clazz;
@@ -51,11 +58,13 @@ public class Conditional
 
         private static final long serialVersionUID = 0;
     }
-    
-    public static <T> T checkNotNull(T reference) {
-        if (reference == null) {
-          throw new NullPointerException();
+
+    public static <T> T checkNotNull(T reference)
+    {
+        if (reference == null)
+        {
+            throw new NullPointerException();
         }
         return reference;
-      }
+    }
 }

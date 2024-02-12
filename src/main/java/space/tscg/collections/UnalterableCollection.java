@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections;
 
 import java.util.Collection;
@@ -16,21 +22,22 @@ public final class UnalterableCollection<E> extends CollectionDecorator<E> imple
      * <p>
      * If the collection passed in is already unmodifiable, it is returned.
      *
-     * @param <T>
-     *            the type of the elements in the collection
-     * @param coll
-     *            the collection to decorate, must not be null
+     * @param  <T>
+     *                                  the type of the elements in the collection
+     * @param  coll
+     *                                  the collection to decorate, must not be null
      * 
-     * @return an unmodifiable collection
+     * @return                      an unmodifiable collection
      * 
      * @throws NullPointerException
-     *             if collection is null
+     *                                  if collection is null
      * 
-     * @since 4.0
+     * @since                       4.0
      */
     public static <T> Collection<T> unalterableCollection(final Collection<? extends T> coll)
     {
-        if (coll instanceof Unalterable) {
+        if (coll instanceof Unalterable)
+        {
             @SuppressWarnings("unchecked") // safe to upcast
             final Collection<T> tmpColl = (Collection<T>) coll;
             return tmpColl;
@@ -41,11 +48,11 @@ public final class UnalterableCollection<E> extends CollectionDecorator<E> imple
     /**
      * Constructor that wraps (not copies).
      *
-     * @param coll
-     *            the collection to decorate, must not be null
+     * @param  coll
+     *                                  the collection to decorate, must not be null
      * 
      * @throws NullPointerException
-     *             if collection is null
+     *                                  if collection is null
      */
     @SuppressWarnings("unchecked") // safe to upcast
     private UnalterableCollection(final Collection<? extends E> coll)

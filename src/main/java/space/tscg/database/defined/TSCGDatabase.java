@@ -1,10 +1,12 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.database.defined;
 
-import static com.rethinkdb.RethinkDB.*;
-
-import com.rethinkdb.gen.ast.ReqlExpr;
 import com.rethinkdb.net.Connection;
-import com.rethinkdb.net.Result;
 
 import space.tscg.database.core.RethinkInterface;
 
@@ -17,23 +19,8 @@ public class TSCGDatabase extends RethinkInterface
         return _instance;
     }
 
-    public static Connection getConn()
+    public Connection getConn()
     {
         return instance().connection();
-    }
-
-    public <T> Result<T> getAll(String tableName, Class<T> target)
-    {
-        return r.table(tableName).run(connection(), target);
-    }
-    
-    public Result<?> runExpr(ReqlExpr expr)
-    {
-        return expr.run(getConn());
-    }
-    
-    public <T> T runExpr(ReqlExpr expr, Class<T> cls)
-    {
-        return expr.run(getConn(), cls).single();
     }
 }

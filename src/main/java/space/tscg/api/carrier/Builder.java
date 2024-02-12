@@ -1,122 +1,141 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * 
+ * Copyright (C) 2023 StellarCartographers.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.api.carrier;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import elite.dangerous.capi.FleetCarrierData;
-import elite.dangerous.capi.modal.fleetcarrier.Modules;
-import elite.dangerous.capi.modal.fleetcarrier.Modules.EliteModule;
-import elite.dangerous.capi.modal.fleetcarrier.Ships;
-import elite.dangerous.capi.modal.fleetcarrier.Ships.EliteShip;
-import elite.dangerous.fdevid.Outfitting;
-import elite.dangerous.fdevid.Shipyard;
-import space.tscg.database.entity.CarrierMarket;
-import space.tscg.database.entity.CarrierMarket.CarrierModule;
-import space.tscg.database.entity.CarrierMarket.CarrierShip;
-import space.tscg.database.entity.CarrierServices;
-import space.tscg.database.entity.CarrierServices.Service;
-import space.tscg.database.entity.CarrierServices.TaxableService;
+import elite.dangerous.capi.modal.fc.*;
+import elite.dangerous.capi.modal.fc.Modules.CarrierModule;
+import elite.dangerous.fdev.Outfitting;
+
+import space.tscg.carrrier.*;
+import space.tscg.carrrier.Service;
 import space.tscg.database.entity.FleetCarrier;
 
-final class Builder {
+public class Builder
+{
     /**
      * Creates a FleetCarrier instance from the data returned from Frontier's CAPI /fleetcarrier endpoint
      *
-     * @param data the CAPIFleetCarrier
-     * @return a new FleetCarrier instance
+     * @param  data
+     *                  the CAPIFleetCarrier
+     * 
+     * @return      a new FleetCarrier instance
      */
-    static FleetCarrier build(FleetCarrierData data) {
-        var services = data.getServicesCrew();
-        var taxation = data.getFinance().getServiceTaxation();
+    static FleetCarrier build(FleetCarrierData data)
+    {
+        var taxation = data.finance().serviceTaxation();
+        var moduleList = buildModuleList(data.modules());
+        var shipList = buildShipList(data.ships());
+        var cs = ServicesImpl.Builder();
+        if (data.isRefuelInstalled())
+            cs.refuel(TaxableService.Creator().enabled(!data.isRefuelSuspended()).taxRate(taxation.refuel).build());
+        else
+            cs.refuel(NonInstalledService.TaxableService());
         
-        var moduleList = buildModuleList(data.getModules());
-        var shipList = buildShipList(data.getShips());
+        if (data.isRepairInstalled())
+            cs.repair(TaxableService.Creator().enabled(!data.isRepairSuspended()).taxRate(taxation.repair).build());
+        else
+            cs.repair(NonInstalledService.TaxableService());
         
-        var cs = CarrierServices.Builder();
-        if(services.isRefuelInstalled())
-            cs.refuel(TaxableService.Creator().enabled(!services.isRefuelSuspended()).tax(taxation.refuel).build());
-        if(services.isRepairInstalled())
-            cs.repair(TaxableService.Creator().enabled(!services.isRepairSuspended()).tax(taxation.repair).build());
-        if(services.isRearmInstalled())
-            cs.armoury(TaxableService.Creator().enabled(!services.isRearmSuspended()).tax(taxation.rearm).build());
-        if(services.isRedemptionOfficeInstalled())
-            cs.redemptionOffice(Service.Creator().enabled(!services.isRedemptionOfficeSuspended()).build());
-        if(services.isShipyardInstalled())
-            cs.shipyard(TaxableService.Creator().enabled(!services.isShipyardSuspended()).tax(taxation.shipyard).build());
-        if(services.isOutfittingInstalled())
-            cs.outfitting(TaxableService.Creator().enabled(!services.isOutfittingSuspended()).tax(taxation.outfitting).build());
-        if(services.isBlackmarketInstalled())
-            cs.secureWarehouse(Service.Creator().enabled(!services.isBlackmarketSuspended()).build());
-        if(services.isUniversalCartographicsInstalled())
-            cs.universalCartographics(Service.Creator().enabled(!services.isUniversalCartographicsSuspended()).build());
-        if(services.isBartenderInstalled())
-            cs.concourseBar(Service.Creator().enabled(!services.isBartenderSuspended()).build());
-        if(services.isVistaGenomicsInstalled())
-            cs.vistaGenomics(Service.Creator().enabled(!services.isVistaGenomicsSuspended()).build());
-        if(services.isPioneerSuppliesInstalled())
-            cs.pioneerSupplies(TaxableService.Creator().enabled(!services.isPioneerSuppliesSuspended()).tax(taxation.pioneersupplies).build());
-            
-        return FleetCarrier.Builder()
-                .id(data.getCarrierId())
-                .callsign(data.getCallsign())
-                .name(data.getName())
-                .system(data.getCurrentStarSystem())
-                .fuel(data.getFuel())
-                .services(cs.build())
-                .orders(data.getOrders())
-                .market(CarrierMarket.Builder().ships(shipList).modules(moduleList).build())
-                .build();
+        if (data.isRearmInstalled())
+            cs.armoury(TaxableService.Creator().enabled(!data.isRearmSuspended()).taxRate(taxation.rearm).build());
+        else
+            cs.armoury(NonInstalledService.TaxableService());
+        
+        if (data.isRedemptionOfficeInstalled())
+            cs.redemptionOffice(Service.Creator().enabled(!data.isRedemptionOfficeSuspended()).build());
+        else
+            cs.redemptionOffice(NonInstalledService.Service());
+        
+        if (data.isShipyardInstalled())
+            cs.shipyard(TaxableService.Creator().enabled(!data.isShipyardSuspended()).taxRate(taxation.shipyard).build());
+        else
+            cs.shipyard(NonInstalledService.TaxableService());
+        
+        if (data.isOutfittingInstalled())
+            cs.outfitting(TaxableService.Creator().enabled(!data.isOutfittingSuspended()).taxRate(taxation.outfitting).build());
+        else
+            cs.outfitting(NonInstalledService.TaxableService());
+        
+        if (data.isBlackmarketInstalled())
+            cs.secureWarehouse(Service.Creator().enabled(!data.isBlackmarketSuspended()).build());
+        else
+            cs.secureWarehouse(NonInstalledService.Service());
+        
+        if (data.isUniversalCartographicsInstalled())
+            cs.universalCartographics(Service.Creator().enabled(!data.isUniversalCartographicsSuspended()).build());
+        else
+            cs.universalCartographics(NonInstalledService.Service());
+        
+        if (data.isBartenderInstalled())
+            cs.concourseBar(Service.Creator().enabled(!data.isBartenderSuspended()).build());
+        else
+            cs.concourseBar(NonInstalledService.Service());
+        
+        if (data.isVistaGenomicsInstalled())
+            cs.vistaGenomics(Service.Creator().enabled(!data.isVistaGenomicsSuspended()).build());
+        else
+            cs.vistaGenomics(NonInstalledService.Service());
+        
+        if (data.isPioneerSuppliesInstalled())
+            cs.pioneerSupplies(TaxableService.Creator().enabled(!data.isPioneerSuppliesSuspended()).taxRate(taxation.pioneersupplies).build());
+        else
+            cs.pioneerSupplies(NonInstalledService.TaxableService());
+        
+        return FleetCarrier.Builder().id(data.carrierId().asText()).callsign(data.callsign()).name(data.name()).system(data.currentStarSystem()).fuel(data.fuel()).services(cs.build()).orders(data.orders()).market(MarketImpl.Builder().ships(shipList).modules(moduleList).build())
+                        .build();
     }
-    
+
     private static List<ICarrierModule> buildModuleList(Modules modules)
     {
         List<ICarrierModule> list = new ArrayList<>();
-        if(modules.isEmpty())
+        if (modules.isEmpty())
         {
             return list;
-        } else {
-            for(EliteModule module : modules)
+        } else
+        {
+            for (CarrierModule module : modules)
             {
-                Outfitting.Module m = Outfitting.getFromId(module.getId());
-                
-                var builder = CarrierModule.Builder();
-                if(m.getGuidance() != null)
-                    builder.guidance(m.getGuidance());
-                if(m.getMount() != null)
-                    builder.mount(m.getMount());
-                
-                builder.fdevId(module.getId());
-                builder.stock(module.getStock());
-                builder.cost(module.getCost());
-                builder.category(m.getCategory());
-                builder.moduleClass(m.getModuleClass());
-                builder.name(m.getName());
-                builder.rating(m.getRating());
-
+                Outfitting.Module m = Outfitting.getFromId(module.id().toLong().intValue());
+                var builder = ModuleImpl.Builder();
+                if (m.guidance() != null)
+                    builder.guidance(m.guidance());
+                if (m.mount() != null)
+                    builder.mount(m.mount());
+                //builder.id(module.id());
+                builder.stock(module.stock());
+                builder.cost(module.cost());
+                builder.category(m.category());
+                builder.moduleClass(m.moduleClass());
+                builder.name(m.name());
+                builder.rating(m.rating());
                 list.add(builder.build());
             }
-            
             return list;
         }
     }
-    
+
     private static List<ICarrierShip> buildShipList(Ships ships)
     {
         List<ICarrierShip> list = new ArrayList<>();
-        if(ships.getShipyard_list().isEmpty())
-        {
+//        if (ships.shipyard_list().isEmpty())
+//        {
+//            return list;
+//        } else
+//        {
+//            for (CarrierShip ship : ships.shipyard_list())
+//            {
+//                list.add(ShipImpl.Builder().id(ship.id()).cost(ship.baseValue()).name(Shipyard.getFromId(ship.id().toLong().intValue()).name()).build());
+//            }
             return list;
-        } else {
-            for(EliteShip ship: ships.getShipyard_list())
-            {
-                list.add(CarrierShip.Builder()
-                    .fdevId(ship.getId())
-                    .cost(ship.getBaseValue())
-                    .name(Shipyard.getFromId(ship.getId()).getName())
-                    .build());
-            }
-            
-            return list;
-        }
+//        }
     }
 }

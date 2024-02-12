@@ -1,6 +1,9 @@
+import space.tscg.gradle.Shared
+
 plugins {
+    id 'com.diffplug.spotless' version '6.+'
     id 'io.freefair.lombok' version '8.+'
-    id 'tscg.defaults' version '1.+'
+    id 'tscg.defaults' version '2.2.2'
     id 'java-library'
 }
 
@@ -8,21 +11,44 @@ group 'space.tscg'
 version '1.0.0-SNAPSHOT'
 
 tscg {
-	devName 'ROMVoid95'
-	devEmail 'rom.void95@gmail.com'
+    devName 'ROMVoid95'
+    devEmail 'rom.void95@gmail.com'
+    onCentral true
+}
+
+spotless {
+    ratchetFrom 'origin/master'
+
+    format('misc') {
+        target '*.gradle', '.gitattributes', '.gitignore'
+        targetExclude('**/build/**/*.*')
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+    java {
+        licenseHeaderFile rootProject.file('extra/spotless/license.txt')
+        importOrderFile rootProject.file('extra/eclipse/eclipse.importorder')
+        eclipse().configFile rootProject.file('extra/eclipse/eclipse-formatter.xml')
+    }
 }
 
 dependencies {
-    compileOnly 'io.javalin:javalin:5.6.2'
-    compileOnly 'com.squareup.okhttp3:okhttp:4.11.0'
-    compileOnly('net.dv8tion:JDA:5.0.0-beta.17') { exclude module: 'opus-java' }
-    implementation 'org.apache.commons:commons-lang3:3.13.0'
-    implementation 'org.tinylog:tinylog-api:2.6.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
-    implementation 'com.rethinkdb:rethinkdb-driver:2.4.4'
-    compileOnly 'space.tscg:elite4j:1.0.0-SNAPSHOT'
-    implementation 'org.panda-lang:expressible:1.3.6'
+    api Shared.Deps().Jackson()
+    api Shared.Deps().RethinkDb()
+    api Shared.Deps().Expressible()
+    
+    compileOnly Shared.Libs().Elite4J()
+    compileOnly Shared.Deps().OAuthSdk()
+    compileOnly Shared.Deps().Javalin()
+    compileOnly Shared.Deps().OkHttp3()
+    compileOnly Shared.Deps().TinyLog()
+    compileOnly('net.dv8tion:JDA:latest.integration') { exclude module: 'opus-java' }
+    
+    implementation Shared.Deps().Environment()
+    implementation Shared.Deps().CommonsLang3()
+    implementation 'commons-validator:commons-validator:1.7'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:latest.release'
 }
 
 javadoc.options.addStringOption('Xdoclint:none', '-quiet')
@@ -31,8 +57,8 @@ jar {
     manifest {
         attributes([
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'GitCommit': tscg.gitInfo().abbreviatedId,
-            'Git-Branch': tscg.gitInfo().branch
+            'GitCommit': tscg.git.abbreviatedId,
+            'Git-Branch': tscg.git.branch
         ] as LinkedHashMap)
         attributes([
             'Specification-Title':      'StellarAPI',

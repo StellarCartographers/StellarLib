@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.iterator;
 
 import java.util.ListIterator;
@@ -12,7 +18,8 @@ public final class UnalterableListIterator<E> implements ListIterator<E>, Unalte
     public static <E> ListIterator<E> unalterableListIterator(final ListIterator<? extends E> iterator)
     {
         Objects.requireNonNull(iterator, "iterator");
-        if (iterator instanceof Unalterable) {
+        if (iterator instanceof Unalterable)
+        {
             @SuppressWarnings("unchecked")
             final ListIterator<E> tmpIterator = (ListIterator<E>) iterator;
             return tmpIterator;
@@ -78,5 +85,4 @@ public final class UnalterableListIterator<E> implements ListIterator<E>, Unalte
     {
         throw new UnsupportedOperationException("add() is not supported");
     }
-
 }

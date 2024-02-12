@@ -1,8 +1,15 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.web.domain;
+
+import okhttp3.HttpUrl;
 
 import java.net.URI;
 
-import okhttp3.HttpUrl;
 import space.tscg.api.domain.APIEndpoint;
 
 public enum Endpoint implements APIEndpoint
@@ -11,8 +18,7 @@ public enum Endpoint implements APIEndpoint
     OAUTH_CALLBACK("/v1/oauth/callback"),
     OAUTH_AUTHLINK("/v1/oauth/authorizationlink"),
     CAPI_CARRIER("/v1/capi/{}/carrier"),
-    CAPI_PROFILE("/v1/capi/{}/profile"),
-    ;
+    CAPI_PROFILE("/v1/capi/{}/profile"),;
 
     private Domain domain;
     private String endpoint;
@@ -21,28 +27,28 @@ public enum Endpoint implements APIEndpoint
     {
         this.endpoint = endpoint;
     }
-    
+
     Endpoint withDomain(Domain domain)
     {
         setDomain(domain);
         return this;
     }
-    
+
     private void setDomain(Domain domain)
     {
         this.domain = domain;
     }
-    
+
     private Domain getDomain()
     {
         return domain == null ? Domain.getDefault() : domain;
     }
-    
+
     public String getEndpoint()
     {
         return endpoint;
     }
-    
+
     public String getBackend()
     {
         return endpoint.split("/")[0];
@@ -55,7 +61,7 @@ public enum Endpoint implements APIEndpoint
         setDomain(null);
         return httpurl;
     }
-    
+
     @Override
     public HttpUrl toHttpUrl()
     {

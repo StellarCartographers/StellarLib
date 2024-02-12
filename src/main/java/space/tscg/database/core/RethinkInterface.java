@@ -1,50 +1,42 @@
-/**
- * Copyright (C) 2023  The Stellar Cartographers' Guild
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
  */
 package space.tscg.database.core;
 
 import static com.rethinkdb.RethinkDB.*;
 
-import com.rethinkdb.RethinkDB;
-import com.rethinkdb.gen.exc.ReqlAuthError;
-import com.rethinkdb.net.Connection;
+import gdn.rom.env.Environment;
+import lombok.Getter;
 
-import space.tscg.api.database.DbEntity;
-import space.tscg.database.Credentials;
-import space.tscg.database.DefinedTable;
-import space.tscg.database.operation.DeleteOperation;
-import space.tscg.database.operation.InsertOperation;
-import space.tscg.database.operation.ReplaceOperation;
-import space.tscg.database.operation.UpdateOperation;
-import space.tscg.properties.dot.Dotenv;
+import com.rethinkdb.RethinkDB;
+import com.rethinkdb.gen.ast.*;
+import com.rethinkdb.gen.exc.ReqlAuthError;
+import com.rethinkdb.net.*;
+
+import java.util.concurrent.ScheduledExecutorService;
+
+import space.tscg.database.RethinkLogin;
+import space.tscg.misc.Factory;
 
 public abstract class RethinkInterface
 {
-    private Credentials credentials;
-    private Connection    connection;
+    @Getter
+    private final ScheduledExecutorService executor = Factory.newScheduledThreadPool(1, "RethinkInterface-Thread", false);
+    private RethinkLogin                   login;
+    private Connection                     connection;
 
     protected RethinkInterface()
     {
-        this.credentials = Credentials.builder().databaseName(Dotenv.get("database")).build();
+        this.login = RethinkLogin.Builder().database(Environment.get("database").toString()).build();
         RethinkDB.setResultMapper(DefaultRethinkMapper.getDefault());
     }
 
-    protected RethinkInterface(Credentials credentials)
+    protected RethinkInterface(RethinkLogin login)
     {
-        this.credentials = credentials;
+        this.login = login;
         RethinkDB.setResultMapper(DefaultRethinkMapper.getDefault());
     }
 
@@ -53,9 +45,9 @@ public abstract class RethinkInterface
      *
      * @return the credentials
      */
-    protected Credentials getCredentials()
+    protected RethinkLogin getRethinkLogin()
     {
-        return this.credentials;
+        return this.login;
     }
 
     /**
@@ -69,7 +61,7 @@ public abstract class RethinkInterface
         {
             try
             {
-                connection = this.credentials.getConnectionBuilder().connect();
+                connection = this.login.connectionBuilder().connect();
             } catch (ReqlAuthError e)
             {
                 throw new ReqlAuthError("RethinkDb Error: " + e.getMessage());
@@ -78,124 +70,23 @@ public abstract class RethinkInterface
         return connection;
     }
 
-    public <T> T get(DefinedTable table, String id, Class<T> type)
+    public Table table(String name)
     {
-        return get(table.toString(), id, type);
-    }
-    
-    public <T> T get(String table, String id, Class<T> type)
-    {
-        return r.table(table).get(id).runAtom(connection(), type);
+        return r.table(name);
     }
 
-    /**
-     * Deletes the object from the database.
-     * <p>
-     * <strong>OPERATION IS DESTRUCTIVE AND CANNOT BE UNDONE AFTER COMPLETED</strong>
-     *
-     * @param object DbEntity object
-     * @return {@link DeleteOperation} result
-     */
-    public DeleteOperation delete(DbEntity object)
+    public <T> Result<T> getAll(String tableName, Class<T> target)
     {
-        return r.table(object.getTable().toString()).get(object.getId()).delete().runAtom(connection(), DeleteOperation.class);
+        return r.table(tableName).run(connection(), target);
     }
 
-    /**
-     * Deletes the object from the database.
-     * <p>
-     * <strong>OPERATION IS DESTRUCTIVE AND CANNOT BE UNDONE AFTER COMPLETED</strong>
-     *
-     * @param table table name
-     * @param id EntityDb id
-     * @return {@link DeleteOperation} result
-     */
-    public DeleteOperation delete(String table, String id)
+    public Result<?> runExpr(ReqlExpr expr)
     {
-        return r.table(table).get(id).delete().runAtom(connection(), DeleteOperation.class);
+        return expr.run(connection());
     }
 
-    /**
-     * Convienance method that helps indicate an object is created and saved to the database.
-     * But will conflict if an object with the same id already exists. 
-     * <br>You can use <code>getFirstError().startsWith("Duplicate primary key")</code> on the
-     * returned {@link InsertOperation} instance to check for a conflict.
-     *
-     * @param object DbEntity object
-     * @return {@link InsertOperation} result
-     */
-    public InsertOperation create(DbEntity object)
+    public <T> T runExpr(ReqlExpr expr, Class<T> cls)
     {
-        return create(object, false);
-    }
-    
-    public InsertOperation create(DbEntity object, boolean returnChanges)
-    {
-        var insert = r.table(object.getTable().toString()).insert(object);
-        return (returnChanges) 
-            ? insert.optArg("return_changes", true).runAtom(connection(), InsertOperation.class) 
-            : insert.runAtom(connection(), InsertOperation.class);
-    }
-
-    /**
-     * Saves the object to the database and returns nothing. 
-     * <p>
-     * <strong> Note: Save operations completely replace all values for object in the database</strong>
-     *
-     * @param object DbEntity object
-     * @see {@link #save(DbEntity)}
-     * @see {@link #update(DbEntity)}
-     * @see {@link #updateNoReply(DbEntity)}
-     */
-    public void saveNoReply(DbEntity object)
-    {
-        r.table(object.getTable().toString()).insert(object).optArg("conflict", "replace").runNoReply(connection());
-    }
-
-    /**
-     * Saves the object to the database and returns a {@link ReplaceOperation}. 
-     * <p>
-     * <strong> Note: Save operations completely replace all values for object in the database</strong>
-     *
-     * @param object DbEntity object
-     * @return {@link ReplaceOperation} result
-     * @see {@link #saveNoReply(DbEntity)}
-     * @see {@link #update(DbEntity)}
-     * @see {@link #updateNoReply(DbEntity)}
-     */
-    public ReplaceOperation save(DbEntity object)
-    {
-        return r.table(object.getTable().toString()).insert(object).optArg("conflict", "replace").runAtom(connection(), ReplaceOperation.class);
-    }
-
-    /**
-     * Updates the object in the database and returns nothing
-     * <p>
-     * <strong> Note: Update operations only replace values that have changed for the object in the database</strong>
-     * 
-     * @param object DbEntity object
-     * @see {@link #saveNoReply(DbEntity)}
-     * @see {@link #save(DbEntity)}
-     * @see {@link #update(DbEntity)}
-     */
-    public void updateNoReply(DbEntity object)
-    {
-        r.table(object.getTable().toString()).insert(object).optArg("conflict", "update").runNoReply(connection());
-    }
-
-    /**
-     * Updates the object in the database and returns a {@link UpdateOperation}. 
-     * <p>
-     * <strong> Note: Update operations only replace values that have changed for the object in the database</strong>
-     *
-     * @param object DbEntity object
-     * @return {@link UpdateOperation} result
-     * @see {@link #saveNoReply(DbEntity)}
-     * @see {@link #save(DbEntity)}
-     * @see {@link #updateNoReply(DbEntity)}
-     */
-    public UpdateOperation update(DbEntity object)
-    {
-        return r.table(object.getTable().toString()).insert(object).optArg("conflict", "update").runAtom(connection(), UpdateOperation.class);
+        return expr.run(connection(), cls).single();
     }
 }

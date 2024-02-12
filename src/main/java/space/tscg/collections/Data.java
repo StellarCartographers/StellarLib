@@ -1,4 +1,20 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,15 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import space.tscg.api.JsonWrapper;
 import space.tscg.collections.Data.DataSerialization;
 import space.tscg.misc.json.Null;
@@ -78,7 +85,6 @@ public class Data<T> implements JsonWrapper
     {
         return new Data<>(data);
     }
-
     //////////////////////////////////////////////
     // -- List Implementation Static Methods -- //
     //////////////////////////////////////////////
@@ -86,14 +92,14 @@ public class Data<T> implements JsonWrapper
     /**
      * Creates a new DataList instance backed by a {@code ArrayList<V>}
      *
-     * @param <V>
-     *            the element Type
+     * @param    <V>
+     *                   the element Type
      * 
-     * @return DataList&#60;V&#62;
+     * @return       DataList&#60;V&#62;
      * 
-     * @implNote Using ArrayList will result in the elements ordered Alphabetically.
-     *           Use {@link Data#asLinkedList() asLinkedList()} if you want
-     *           to retain the order of elements as they are added.
+     * @implNote     Using ArrayList will result in the elements ordered Alphabetically.
+     *               Use {@link Data#asLinkedList() asLinkedList()} if you want
+     *               to retain the order of elements as they are added.
      */
     public static <V> DataList<V> asArrayList()
     {
@@ -103,15 +109,15 @@ public class Data<T> implements JsonWrapper
     /**
      * Creates a new DataList instance backed by a {@code LinkedList<V>}
      *
-     * @param <V>
-     *            the element Type
+     * @param    <V>
+     *                   the element Type
      * 
-     * @return DataList&#60;V&#62;
+     * @return       DataList&#60;V&#62;
      * 
      * @implNote
-     *           Using LinkedList keeps the order in which elements were inserted into the list
-     *           (insertion-order). You can safely use {@link Data#asArrayList() asArrayList()}
-     *           if insert order is not important.
+     *               Using LinkedList keeps the order in which elements were inserted into the list
+     *               (insertion-order). You can safely use {@link Data#asArrayList() asArrayList()}
+     *               if insert order is not important.
      */
     public static <V> DataList<V> asLinkedList()
     {
@@ -122,12 +128,12 @@ public class Data<T> implements JsonWrapper
      * Creates a new DataList instance backed by the provided {@code List<V> }
      * Supplier
      *
-     * @param <V>
-     *            the Values Type
-     * @param supplier
-     *            the backing List supplier ( eg: {@code ArrayList::new} )
+     * @param  <V>
+     *                      the Values Type
+     * @param  supplier
+     *                      the backing List supplier ( eg: {@code ArrayList::new} )
      * 
-     * @return DataList&#60;V&#62;
+     * @return          DataList&#60;V&#62;
      */
     public static <V> DataList<V> asList(Supplier<List<V>> supplier)
     {
@@ -140,14 +146,14 @@ public class Data<T> implements JsonWrapper
     /**
      * Creates a new DataMap instance backed by a {@code HashMap<String, V>}
      *
-     * @param <V>
-     *            the Values Type
+     * @param    <V>
+     *                   the Values Type
      * 
-     * @return DataMap&#60;V&#62;
+     * @return       DataMap&#60;V&#62;
      * 
-     * @implNote Using HashMap will result in the key fields ordered Alphabetically.
-     *           Use {@link Data#asLinkedHashMap() asLinkedHashMap()} if you want
-     *           to retain the order of keys as they are added.
+     * @implNote     Using HashMap will result in the key fields ordered Alphabetically.
+     *               Use {@link Data#asLinkedHashMap() asLinkedHashMap()} if you want
+     *               to retain the order of keys as they are added.
      */
     public static <V> DataMap<V> asHashMap()
     {
@@ -157,15 +163,15 @@ public class Data<T> implements JsonWrapper
     /**
      * Creates a new DataMap instance backed by a {@code LinkedHashMap<String, V>}
      *
-     * @param <V>
-     *            the Values Type
+     * @param    <V>
+     *                   the Values Type
      * 
-     * @return DataMap&#60;V&#62;
+     * @return       DataMap&#60;V&#62;
      * 
      * @implNote
-     *           Using LinkedHashMap keeps the order in which keys were inserted into the map
-     *           (insertion-order). You can safely use {@link Data#asHashMap() asHashMap()} if
-     *           key order is not important.
+     *               Using LinkedHashMap keeps the order in which keys were inserted into the map
+     *               (insertion-order). You can safely use {@link Data#asHashMap() asHashMap()} if
+     *               key order is not important.
      */
     public static <V> DataMap<V> asLinkedHashMap()
     {
@@ -176,12 +182,12 @@ public class Data<T> implements JsonWrapper
      * Creates a new DataMap instance backed by the provided {@code Map<String,V> }
      * Supplier
      *
-     * @param <V>
-     *            the Values Type
-     * @param supplier
-     *            the backing Map supplier ( eg: {@code HashMap::new} )
+     * @param  <V>
+     *                      the Values Type
+     * @param  supplier
+     *                      the backing Map supplier ( eg: {@code HashMap::new} )
      * 
-     * @return DataMap&#60;V&#62;
+     * @return          DataMap&#60;V&#62;
      */
     public static <V> DataMap<V> asMap(Supplier<Map<String, V>> supplier)
     {
@@ -208,10 +214,10 @@ public class Data<T> implements JsonWrapper
          * <li><strong>NOTE: Replaces list entirely</strong></li>
          * </ul>
          *
-         * @param list
-         *            List&#60;T&#62;
+         * @param  list
+         *                  List&#60;T&#62;
          * 
-         * @return returns this DataList&#60;T&#62;, useful for chaining
+         * @return      returns this DataList&#60;T&#62;, useful for chaining
          */
         public DataList<T> set(List<T> list)
         {
@@ -222,10 +228,10 @@ public class Data<T> implements JsonWrapper
         /**
          * Adds all elements of the supplied list then returns this instance<br>
          *
-         * @param list
-         *            List&#60;T&#62;
+         * @param  list
+         *                  List&#60;T&#62;
          * 
-         * @return returns this DataList&#60;T&#62;, useful for chaining
+         * @return      returns this DataList&#60;T&#62;, useful for chaining
          */
         public DataList<T> addAll(List<T> list)
         {
@@ -237,9 +243,9 @@ public class Data<T> implements JsonWrapper
          * Add element to the backing list then returns this instance<br>
          * .
          *
-         * @param element
+         * @param  element
          * 
-         * @return returns this DataList&#60;T&#62;, useful for chaining
+         * @return         returns this DataList&#60;T&#62;, useful for chaining
          */
         public DataList<T> add(T element)
         {
@@ -273,10 +279,10 @@ public class Data<T> implements JsonWrapper
          * <li><strong>NOTE: Replaces map entirely</strong></li>
          * </ul>
          *
-         * @param map
-         *            Map&#60;String, T&#62;
+         * @param  map
+         *                 Map&#60;String, T&#62;
          * 
-         * @return returns this DataMap&#60;String, T&#62;, useful for chaining
+         * @return     returns this DataMap&#60;String, T&#62;, useful for chaining
          */
         public DataMap<V> set(Map<String, V> map)
         {
@@ -287,10 +293,10 @@ public class Data<T> implements JsonWrapper
         /**
          * Adds all Key/Value pairs of the supplied map then returns this instance<br>
          *
-         * @param map
-         *            Map&#60;String, T&#62;
+         * @param  map
+         *                 Map&#60;String, T&#62;
          * 
-         * @return returns this DataMap&#60;String, T&#62;, useful for chaining
+         * @return     returns this DataMap&#60;String, T&#62;, useful for chaining
          */
         public DataMap<V> addAll(Map<String, V> map)
         {
@@ -301,10 +307,10 @@ public class Data<T> implements JsonWrapper
         /**
          * Adds a single Key/Value pair to the backing map then returns this instance<br>
          *
-         * @param key
-         * @param data
+         * @param  key
+         * @param  data
          * 
-         * @return returns this DataMap&#60;String, T&#62;, useful for chaining
+         * @return      returns this DataMap&#60;String, T&#62;, useful for chaining
          */
         public DataMap<V> add(String key, V data)
         {

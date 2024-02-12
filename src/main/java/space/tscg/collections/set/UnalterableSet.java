@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.set;
 
 import java.util.Collection;
@@ -15,7 +21,8 @@ public final class UnalterableSet<E> extends SerializableSetDecorator<E> impleme
 
     public static <E> Set<E> unalterableSet(final Set<? extends E> set)
     {
-        if (set instanceof Unalterable) {
+        if (set instanceof Unalterable)
+        {
             @SuppressWarnings("unchecked")
             final Set<E> tmpSet = (Set<E>) set;
             return tmpSet;
@@ -76,5 +83,4 @@ public final class UnalterableSet<E> extends SerializableSetDecorator<E> impleme
     {
         throw new UnsupportedOperationException();
     }
-
 }

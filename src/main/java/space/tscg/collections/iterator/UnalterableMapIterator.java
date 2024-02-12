@@ -1,3 +1,9 @@
+/*
+ * This file is part of StellarLib, licensed under the GNU GPL v3.0.
+ * Copyright (C) 2023 StellarCartographers.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
+ */
 package space.tscg.collections.iterator;
 
 import java.util.Objects;
@@ -12,22 +18,23 @@ public final class UnalterableMapIterator<K, V> implements MapIterator<K, V>, Un
     /**
      * Decorates the specified iterator such that it cannot be modified.
      *
-     * @param <K>
-     *            the key type
-     * @param <V>
-     *            the value type
-     * @param iterator
-     *            the iterator to decorate
+     * @param  <K>
+     *                                  the key type
+     * @param  <V>
+     *                                  the value type
+     * @param  iterator
+     *                                  the iterator to decorate
      * 
-     * @return a new unmodifiable map iterator
+     * @return                      a new unmodifiable map iterator
      * 
      * @throws NullPointerException
-     *             if the iterator is null
+     *                                  if the iterator is null
      */
     public static <K, V> MapIterator<K, V> unalterableMapIterator(final MapIterator<? extends K, ? extends V> iterator)
     {
         Objects.requireNonNull(iterator, "iterator");
-        if (iterator instanceof Unalterable) {
+        if (iterator instanceof Unalterable)
+        {
             @SuppressWarnings("unchecked") // safe to upcast
             final MapIterator<K, V> tmpIterator = (MapIterator<K, V>) iterator;
             return tmpIterator;
@@ -39,7 +46,7 @@ public final class UnalterableMapIterator<K, V> implements MapIterator<K, V>, Un
      * Constructor.
      *
      * @param iterator
-     *            the iterator to decorate
+     *                     the iterator to decorate
      */
     private UnalterableMapIterator(final MapIterator<? extends K, ? extends V> iterator)
     {
