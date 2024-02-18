@@ -104,7 +104,7 @@ public class Builder
         {
             for (CarrierModule module : modules)
             {
-                Outfitting.Module m = Outfitting.getFromId(module.id().toLong().intValue());
+                Outfitting.Module m = Outfitting.getFromId(module.id().asLong());
                 var builder = ModuleImpl.Builder();
                 if (m.guidance() != null)
                     builder.guidance(m.guidance());

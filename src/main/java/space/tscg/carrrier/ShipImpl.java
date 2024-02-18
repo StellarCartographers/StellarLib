@@ -9,15 +9,16 @@ package space.tscg.carrrier;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
+import elite.dangerous.model.identity.ID;
+
 import space.tscg.api.carrier.ICarrierShip;
-import space.tscg.misc.FDevID;
 
 @Getter
 @Builder(builderMethodName = "Builder")
 @Jacksonized
 public class ShipImpl implements ICarrierShip
 {
-    private FDevID id;
+    private ID id;
     private String name;
     private int    cost;
 }

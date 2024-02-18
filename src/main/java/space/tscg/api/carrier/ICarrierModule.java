@@ -9,14 +9,14 @@ package space.tscg.api.carrier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import elite.dangerous.fdev.Outfitting.*;
+import elite.dangerous.model.identity.ID;
 
 import space.tscg.carrrier.ModuleImpl;
-import space.tscg.misc.FDevID;
 
 @JsonDeserialize(as = ModuleImpl.class)
 public interface ICarrierModule
 {
-    FDevID id();
+    ID id();
 
     Category category();
 

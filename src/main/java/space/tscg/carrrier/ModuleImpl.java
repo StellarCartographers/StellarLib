@@ -6,26 +6,22 @@
  */
 package space.tscg.carrrier;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 import org.jetbrains.annotations.Nullable;
 
-import elite.dangerous.fdev.Outfitting.Category;
-import elite.dangerous.fdev.Outfitting.Guidance;
-import elite.dangerous.fdev.Outfitting.Mount;
-import elite.dangerous.fdev.Outfitting.Rating;
+import elite.dangerous.fdev.Outfitting.*;
+import elite.dangerous.model.identity.ID;
 
 import space.tscg.api.carrier.ICarrierModule;
-import space.tscg.misc.FDevID;
 
 @Getter
 @Builder(builderMethodName = "Builder")
 @Jacksonized
 public class ModuleImpl implements ICarrierModule
 {
-    private FDevID   id;
+    private ID   id;
     private Category category;
     private String   name;
     @Nullable

@@ -4,7 +4,7 @@ plugins {
     id "com.autonomousapps.dependency-analysis" version "1.29.0"
     id 'com.diffplug.spotless' version '6.+'
     id 'io.freefair.lombok' version '8.+'
-    id 'tscg.defaults' version '2.2.2'
+    id 'tscg.defaults' version '2.2.4'
     id 'java-library'
 }
 
@@ -15,6 +15,10 @@ tscg {
     devName 'ROMVoid95'
     devEmail 'rom.void95@gmail.com'
     onCentral true
+}
+
+lombok {
+    version = "1.18.30"
 }
 
 spotless {
@@ -35,6 +39,8 @@ spotless {
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    
     api Shared.Deps().JacksonCore()
     api Shared.Deps().JacksonAnnotations()
     api Shared.Deps().JacksonDatabind()

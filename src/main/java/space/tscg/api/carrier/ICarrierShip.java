@@ -8,13 +8,14 @@ package space.tscg.api.carrier;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import elite.dangerous.model.identity.ID;
+
 import space.tscg.carrrier.ShipImpl;
-import space.tscg.misc.FDevID;
 
 @JsonDeserialize(as = ShipImpl.class)
 public interface ICarrierShip
 {
-    FDevID id();
+    ID id();
 
     String name();
 
