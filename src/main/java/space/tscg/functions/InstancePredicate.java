@@ -4,22 +4,25 @@
  * You should have received a copy of the GNU General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/gpl-3.0-standalone.html>.
  */
-package space.tscg.misc;
-
-import lombok.RequiredArgsConstructor;
+package space.tscg.functions;
 
 import java.util.function.Predicate;
 
-@RequiredArgsConstructor
-public class Predicated<T>
+public class InstancePredicate<T>
 {
     private final T            objectInstance;
     private final Predicate<T> predicate;
-    private Boolean            mustEqual = null;
+    private final Boolean            mustEqual;
 
-    public Predicated(T instance, Predicate<T> predicate, Boolean mustEqual)
+    public InstancePredicate(T instance, Predicate<T> predicate)
     {
-        this(instance, predicate);
+        this(instance, predicate, null);
+    }
+    
+    public InstancePredicate(T instance, Predicate<T> predicate, Boolean mustEqual)
+    {
+        this.objectInstance = instance;
+        this.predicate = predicate;
         this.mustEqual = mustEqual;
     }
 

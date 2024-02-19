@@ -19,12 +19,12 @@ import com.rethinkdb.net.*;
 import java.util.concurrent.ScheduledExecutorService;
 
 import space.tscg.database.RethinkLogin;
-import space.tscg.misc.Factory;
+import space.tscg.misc.ExecutorFactory;
 
 public abstract class RethinkInterface
 {
     @Getter
-    private final ScheduledExecutorService executor = Factory.newScheduledThreadPool(1, "RethinkInterface-Thread", false);
+    private final ScheduledExecutorService executor = ExecutorFactory.newScheduledThreadPool(1, "RethinkInterface-Thread", false);
     private RethinkLogin                   login;
     private Connection                     connection;
 

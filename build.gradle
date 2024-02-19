@@ -1,11 +1,11 @@
 import space.tscg.gradle.Shared
 
 plugins {
-    id "com.autonomousapps.dependency-analysis" version "1.29.0"
-    id 'com.diffplug.spotless' version '6.+'
-    id 'io.freefair.lombok' version '8.+'
-    id 'tscg.defaults' version '2.2.4'
     id 'java-library'
+    id 'tscg.defaults' version '2.2.4'
+    id 'io.freefair.lombok' version '8.+'
+    id 'com.diffplug.spotless' version '6.+'
+    id "com.autonomousapps.dependency-analysis" version "1.29.0"
 }
 
 group 'space.tscg'

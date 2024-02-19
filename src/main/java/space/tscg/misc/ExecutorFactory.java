@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 @Slf4j
-public class Factory
+public class ExecutorFactory
 {
     public static ScheduledExecutorService newScheduledThreadPool(int poolSize, String threadName, boolean isDaemon)
     {

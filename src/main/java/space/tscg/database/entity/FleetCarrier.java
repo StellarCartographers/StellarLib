@@ -18,7 +18,6 @@ import elite.dangerous.capi.modal.fc.orders.Orders;
 
 import space.tscg.api.carrier.*;
 import space.tscg.collections.DiffMap;
-import space.tscg.misc.DiffMapper;
 
 @Data
 @Builder(builderMethodName = "Builder", toBuilder = true)
@@ -53,7 +52,7 @@ public class FleetCarrier implements IFleetCarrier
             .append("fuel", this.fuel, other.fuel())
             .append("system", this.system, other.system())
             .appendDiff("services", this.services.diff(other.services()))
-            .appendDiff("orders", DiffMapper.build(this.orders, other.orders()))
+            .appendDiff("orders", DiffMap.fromObjects(this.orders, other.orders()))
             .build();
     }
     /* @formatter */
